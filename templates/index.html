@@ -589,6 +589,201 @@
             font-weight: 500;
             color: var(--text-muted);
         }
+
+        /* Premium NLP Search Styles */
+        .nlp-search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .search-card-custom {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 53, 148, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+        .search-bar-custom {
+            display: flex;
+            background: #f8fafc;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            transition: all 0.25s ease;
+            align-items: center;
+        }
+        .search-bar-custom:focus-within {
+            border-color: var(--bhel-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 53, 148, 0.1);
+        }
+        .search-input-custom {
+            border: none;
+            background: transparent;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            flex: 1;
+            outline: none;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+        .search-button-custom {
+            background: var(--bhel-orange);
+            color: white;
+            border: none;
+            border-radius: 0.35rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .search-button-custom:hover {
+            background: #e08316;
+            box-shadow: 0 4px 12px rgba(247, 148, 29, 0.25);
+        }
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .suggestion-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .chip {
+            background: rgba(0, 53, 148, 0.04);
+            color: var(--bhel-blue);
+            border: 1px solid rgba(0, 53, 148, 0.08);
+            border-radius: 2rem;
+            padding: 0.35rem 0.95rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chip:hover {
+            background: var(--bhel-blue);
+            color: white;
+            border-color: var(--bhel-blue);
+        }
+        .kpi-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        .kpi-mini-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .kpi-mini-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .kpi-mini-val {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--bhel-blue);
+        }
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .progress-item-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .progress-bar-bg {
+            background: #e2e8f0;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .progress-bar-fill {
+            background: var(--bhel-blue);
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        .progress-bar-fill.orange {
+            background: var(--bhel-orange);
+        }
+        .progress-bar-fill.green {
+            background: #10b981;
+        }
+        .learning-note-card {
+            background: rgba(247, 148, 29, 0.02);
+            border: 1px solid rgba(247, 148, 29, 0.08);
+            border-left: 3px solid var(--bhel-orange);
+            border-radius: 0.35rem;
+            padding: 0.65rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            line-height: 1.35;
+        }
+        .result-pill {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.2rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+        .result-pill.blue {
+            background: rgba(0, 53, 148, 0.05);
+            color: var(--bhel-blue);
+        }
+        .result-pill.orange {
+            background: rgba(247, 148, 29, 0.05);
+            color: var(--bhel-orange);
+        }
+        .result-pill.green {
+            background: rgba(16, 185, 129, 0.05);
+            color: #10b981;
+        }
+        .result-card-custom {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .result-card-custom:hover {
+            box-shadow: 0 8px 24px rgba(0, 53, 148, 0.06);
+            border-color: rgba(0, 53, 148, 0.15);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -636,6 +831,14 @@
                 <li><div class="nav-item" onclick="switchView('predictions', this)">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                     ML Predictions
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('nlp-search', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    NLP Search
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('rca', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                    RCA Dashboard
                 </div></li>
                 <li><div class="nav-item" onclick="switchView('model-report', this)">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -981,6 +1184,97 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: NLP SEARCH ================= -->
+            <div id="view-nlp-search" class="dashboard-view">
+                <div class="search-card-custom">
+                    <div class="search-bar-custom">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.5" style="margin-left: 1rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="nlp-search-query" class="search-input-custom" placeholder="Type search keywords here (e.g. 'spindle passing bonnet leakage', 'handwheel valve issue')..." onkeydown="if(event.key === 'Enter') executeNlpSearch()" />
+                        <button id="nlp-search-btn" class="search-button-custom" onclick="executeNlpSearch()">
+                            NLP Search
+                        </button>
+                    </div>
+                    <div class="suggestion-chips">
+                        <span class="suggestion-label">Suggested Keywords:</span>
+                        <button class="chip" onclick="applySuggestion('bonnet leakage')">Bonnet Leakage</button>
+                        <button class="chip" onclick="applySuggestion('spindle passing')">Spindle Passing</button>
+                        <button class="chip" onclick="applySuggestion('gland leakage')">Gland Leakage</button>
+                        <button class="chip" onclick="applySuggestion('vibration')">Vibration</button>
+                        <button class="chip" onclick="applySuggestion('weld crack')">Weld Crack</button>
+                        <button class="chip" onclick="applySuggestion('material defect')">Material Defect</button>
+                    </div>
+                </div>
+
+                <div class="app-layout" style="grid-template-columns: 360px 1fr; gap: 1.5rem; min-height: auto; padding: 0; margin-top: 1.5rem;">
+                    <!-- Left: RCA Summary of search results -->
+                    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                        <div class="chart-card" style="border-top: 4px solid var(--bhel-orange); height: fit-content; padding: 1.25rem;">
+                            <div class="chart-card-header" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                                <h3 class="chart-title" style="display:flex; align-items:center; gap:0.5rem;">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                    AI RCA Context Summary
+                                </h3>
+                            </div>
+                            <div id="nlp-rca-summary">
+                                <div style="color:var(--text-muted); font-style:italic; font-size:0.85rem; padding: 1rem 0; text-align:center;">
+                                    Type keywords above to run search and analyze root causes.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Search Results List -->
+                    <div class="chart-card" style="border-top: 4px solid var(--bhel-blue); padding: 1.25rem;">
+                        <div class="chart-card-header" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                            <h3 class="chart-title">Matched Complaints</h3>
+                            <span style="font-size:0.75rem; font-weight:700; color:var(--bhel-blue); background:rgba(0,53,148,0.06); padding:0.25rem 0.6rem; border-radius:1rem;">
+                                Matched: <span id="nlp-results-count">0</span>
+                            </span>
+                        </div>
+                        <div class="results-list" id="nlp-results-list" style="max-height: 700px; overflow-y:auto; display:flex; flex-direction:column; gap:1rem; padding-right: 0.5rem;">
+                            <div class="empty-state" style="padding: 4rem 1rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px; height:48px; color:var(--text-muted); margin-bottom:1rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <h3 style="color:var(--text-muted);">Enter keywords to begin search</h3>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">Matches are computed semantically based on TF-IDF word frequency across all descriptions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: RCA DASHBOARD ================= -->
+            <div id="view-rca" class="dashboard-view">
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">NC Categorization Breakdown (Top 10)</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-rca-nc"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Defect Type by Product (Top 5 Products)</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-rca-defect-product"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3 class="chart-title">Root Cause Learnings & Action Items</h3>
+                        <p style="font-size:0.8rem; color:var(--text-muted);">Common lessons learned gathered from resolved complaints.</p>
+                    </div>
+                    <div id="rca-learnings-list" style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.9rem; padding: 0.5rem 0;">
+                        <!-- Populate dynamically -->
                     </div>
                 </div>
             </div>
@@ -1452,6 +1746,76 @@
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
+
+            // 14. RCA - NC Categorization
+            if (data.rca_global && data.rca_global.top_nc_types) {
+                const ncCtx = document.getElementById('chart-rca-nc').getContext('2d');
+                const ncKeys = Object.keys(data.rca_global.top_nc_types);
+                charts['chart-rca-nc'] = new Chart(ncCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ncKeys.map(k => k.length > 25 ? k.substring(0, 25) + '...' : k),
+                        datasets: [{
+                            label: 'NC Counts',
+                            data: ncKeys.map(k => data.rca_global.top_nc_types[k]),
+                            backgroundColor: '#003594',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+                });
+            }
+
+            // 15. RCA - Defect by Product (Stacked Bar)
+            if (data.rca_global && data.rca_global.defect_product) {
+                const dpCtx = document.getElementById('chart-rca-defect-product').getContext('2d');
+                const dpProducts = data.rca_global.defect_product.products;
+                const dpDefects = Object.keys(data.rca_global.defect_product.defects);
+                const colors = ['#003594', '#F7941D', '#10b981', '#3b82f6', '#8b5cf6'];
+                const dpDatasets = dpDefects.map((def, idx) => ({
+                    label: def,
+                    data: data.rca_global.defect_product.defects[def],
+                    backgroundColor: colors[idx % colors.length]
+                }));
+                charts['chart-rca-defect-product'] = new Chart(dpCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: dpProducts,
+                        datasets: dpDatasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { stacked: true }, y: { stacked: true } }
+                    }
+                });
+            }
+
+            // 16. RCA - Learnings List
+            const learningsList = document.getElementById('rca-learnings-list');
+            if (learningsList && data.rca_global && data.rca_global.learnings) {
+                learningsList.innerHTML = '';
+                if (data.rca_global.learnings.length === 0) {
+                    learningsList.innerHTML = '<div style="color:var(--text-muted); font-style:italic; padding:0.5rem 0;">No learning data recorded in selected dataset subset.</div>';
+                } else {
+                    data.rca_global.learnings.forEach(lrn => {
+                        const item = document.createElement('div');
+                        item.style.display = 'flex';
+                        item.style.gap = '0.5rem';
+                        item.style.alignItems = 'flex-start';
+                        item.style.background = 'rgba(0,53,148,0.02)';
+                        item.style.padding = '0.75rem';
+                        item.style.borderRadius = '0.5rem';
+                        item.style.borderLeft = '3px solid var(--bhel-blue)';
+                        
+                        item.innerHTML = `
+                            <svg width="16" height="16" fill="none" stroke="var(--bhel-blue)" stroke-width="2.5" viewBox="0 0 24 24" style="margin-top:2px; flex-shrink: 0;"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>${lrn}</span>
+                        `;
+                        learningsList.appendChild(item);
+                    });
+                }
+            }
         }
 
         // Export active Chart as Image
@@ -1664,6 +2028,235 @@
             }
             
             stepAnimation();
+        }
+
+        // Apply tag click suggestion
+        function applySuggestion(text) {
+            document.getElementById('nlp-search-query').value = text;
+            executeNlpSearch();
+        }
+
+        // Semantics NLP search execution
+        async function executeNlpSearch() {
+            const query = document.getElementById('nlp-search-query').value.trim();
+            const startYear = parseInt(document.getElementById('start-year-slider').value);
+            const endYear = parseInt(document.getElementById('end-year-slider').value);
+            const region = document.getElementById('global-region').value;
+            const unit = document.getElementById('global-unit').value;
+            
+            const resultsList = document.getElementById('nlp-results-list');
+            const resultsCount = document.getElementById('nlp-results-count');
+            const rcaSummary = document.getElementById('nlp-rca-summary');
+            
+            // Show loading
+            resultsList.innerHTML = `
+                <div style="display:flex; justify-content:center; align-items:center; padding:4rem; flex-direction:column; gap:1rem;">
+                    <div class="spinner"></div>
+                    <div style="color:var(--text-muted); font-size:0.9rem;">Searching & analyzing text semantics...</div>
+                </div>
+            `;
+            
+            const payload = {
+                query: query,
+                start_year: startYear,
+                end_year: endYear,
+                region: region,
+                unit: unit,
+                limit: 50
+            };
+            
+            try {
+                const response = await fetch('/api/nlp_search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    resultsList.innerHTML = `<div style="color:var(--danger); padding:2rem; text-align:center;">Error: ${data.error}</div>`;
+                    return;
+                }
+                
+                resultsCount.innerText = data.total_results.toLocaleString();
+                
+                // 1. Populate RCA Summary with progress bars
+                if (data.rca_summary) {
+                    const r = data.rca_summary;
+                    
+                    // Helper to build progress bars
+                    const buildProgressBarHtml = (obj, colorClass) => {
+                        const entries = Object.entries(obj);
+                        if (entries.length === 0) return '<div style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">None</div>';
+                        const maxVal = Math.max(...entries.map(e => e[1]));
+                        return `<div class="progress-list">` + entries.map(([key, val]) => {
+                            const pct = maxVal > 0 ? (val / maxVal * 100) : 0;
+                            return `
+                                <div class="progress-item">
+                                    <div class="progress-item-label">
+                                        <span style="color:var(--text-main);">${key}</span>
+                                        <span style="color:var(--text-muted);">${val}</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill ${colorClass}" style="width: ${pct}%"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') + `</div>`;
+                    };
+                    
+                    let defectsHtml = buildProgressBarHtml(r.top_defects, 'orange');
+                    let ncHtml = buildProgressBarHtml(r.top_nc, '');
+                    let vendorHtml = buildProgressBarHtml(r.top_vendors, 'green');
+                    
+                    rcaSummary.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:1.25rem;">
+                            <!-- Semantic KPIs -->
+                            <div class="kpi-mini-grid">
+                                <div class="kpi-mini-card">
+                                    <span class="kpi-mini-label">Avg Resolution</span>
+                                    <span class="kpi-mini-val">${r.avg_resolution_days} <span style="font-size:0.75rem; font-weight:600; color:var(--text-muted);">Days</span></span>
+                                </div>
+                                <div class="kpi-mini-card">
+                                    <span class="kpi-mini-label">Avg Severity</span>
+                                    <span class="kpi-mini-val">${r.avg_severity}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Top Defect Types -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">Top Defect Types</div>
+                                ${defectsHtml}
+                            </div>
+                            
+                            <!-- Top NC Categories -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">Top NC Categories</div>
+                                ${ncHtml}
+                            </div>
+
+                            <!-- Top Vendor Sources -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">Top Vendor Sources</div>
+                                ${vendorHtml}
+                            </div>
+
+                            <!-- Action Learnings -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-orange); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">RCA Action Learnings</div>
+                                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                    ${r.learnings.map(l => `<div class="learning-note-card">${l}</div>`).join('') || '<div style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">No learning entries available.</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // 2. Populate Results list
+                resultsList.innerHTML = '';
+                if (data.results.length === 0) {
+                    resultsList.innerHTML = `
+                        <div class="empty-state" style="padding: 4rem 1rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px; height:48px; color:var(--text-muted); margin-bottom:1rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <h3 style="color:var(--text-muted);">No complaints matched your keywords.</h3>
+                            <p style="font-size:0.85rem; color:var(--text-muted);">Try broadening your query or removing active filters.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                data.results.forEach(res => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card-custom';
+                    
+                    // Assign border-left color depending on severity
+                    const unitSev = parseFloat(res['Severity Rating (Given by Unit)'] || res['Severity Rating (Given by Site)'] || 0.5);
+                    let borderLeftColor = 'var(--bhel-blue)';
+                    let severityLabel = 'Medium';
+                    let severityClass = 'orange';
+                    if (unitSev >= 0.7) {
+                        borderLeftColor = 'var(--danger)';
+                        severityLabel = 'High Severity';
+                        severityClass = 'orange';
+                    } else if (unitSev <= 0.35) {
+                        borderLeftColor = 'var(--success)';
+                        severityLabel = 'Low Severity';
+                        severityClass = 'green';
+                    } else {
+                        severityLabel = 'Medium Severity';
+                        severityClass = 'blue';
+                    }
+                    card.style.borderLeft = `5px solid ${borderLeftColor}`;
+                    
+                    // Highlight query tokens
+                    let desc = res['Problem Description'] || 'No description provided';
+                    let rec = res['Site Recommendation'] || 'No site recommendation provided';
+                    let learn = res['Learning Derived'] || 'No learning derived';
+                    
+                    if (query && data.query_tokens && data.query_tokens.length > 0) {
+                        data.query_tokens.forEach(tok => {
+                            if (tok && tok.length > 2) {
+                                const regex = new RegExp(`(${tok})`, 'gi');
+                                desc = desc.replace(regex, '<mark style="background:rgba(247,148,29,0.25); color:inherit; font-weight:600; padding:0 2px; border-radius:2px;">$1</mark>');
+                                rec = rec.replace(regex, '<mark style="background:rgba(247,148,29,0.25); color:inherit; font-weight:600; padding:0 2px; border-radius:2px;">$1</mark>');
+                                learn = learn.replace(regex, '<mark style="background:rgba(247,148,29,0.25); color:inherit; font-weight:600; padding:0 2px; border-radius:2px;">$1</mark>');
+                            }
+                        });
+                    }
+                    
+                    const scoreBadge = query ? `
+                        <span style="font-size:0.75rem; font-weight:700; color:var(--bhel-orange); background:rgba(247,148,29,0.08); padding:0.2rem 0.5rem; border-radius:0.25rem;">
+                            Match: ${(res.score || 0).toFixed(3)}
+                        </span>
+                    ` : '';
+                    
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; border-bottom:1px solid rgba(0,0,0,0.03); padding-bottom:0.5rem; margin-bottom:0.25rem;">
+                            <div>
+                                <strong style="color:var(--bhel-blue); font-size:0.95rem;">${res['Complaint Number'] || 'Unknown No.'} (Sno: ${res['Sno'] || 'N/A'})</strong>
+                                <span style="font-size:0.75rem; color:var(--text-muted); margin-left:0.5rem;">[${res['Complaint Date'] ? res['Complaint Date'].substring(0, 10) : 'N/A'}]</span>
+                            </div>
+                            <div style="display:flex; gap:0.4rem; align-items:center;">
+                                ${scoreBadge}
+                                <span class="result-pill ${res['Status'] === 'Closed' ? 'green' : 'blue'}">
+                                    ${res['Status'] || 'Unknown'}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size:0.88rem; color:var(--text-main); line-height:1.45;">
+                            <strong style="color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; display:block; margin-bottom:0.25rem; letter-spacing:0.02rem;">Problem Description</strong>
+                            ${desc}
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-top:0.35rem;">
+                            <div style="background:rgba(0,53,148,0.01); border: 1px solid rgba(0,53,148,0.03); padding:0.65rem; border-radius:0.35rem; font-size:0.8rem; line-height:1.4;">
+                                <strong style="color:var(--text-muted); font-size:0.7rem; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Site Recommendation</strong>
+                                ${rec}
+                            </div>
+                            <div style="background:rgba(247,148,29,0.01); border: 1px solid rgba(247,148,29,0.03); padding:0.65rem; border-radius:0.35rem; font-size:0.8rem; line-height:1.4;">
+                                <strong style="color:var(--text-muted); font-size:0.7rem; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Learning Derived</strong>
+                                ${learn}
+                            </div>
+                        </div>
+
+                        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid rgba(0,0,0,0.03);">
+                            <span class="result-pill blue">Product: ${res['Product'] || 'N/A'}</span>
+                            <span class="result-pill">Project: ${res['Project'] || 'N/A'}</span>
+                            <span class="result-pill">Defect: ${res['Defect Type'] || 'N/A'}</span>
+                            <span class="result-pill">NC Cat: ${res['NC Categorization'] || 'N/A'}</span>
+                            <span class="result-pill">SLA: ${res['Days Taken for Disposition'] || 'N/A'} Days</span>
+                            <span class="result-pill ${severityClass}">${severityLabel} (${unitSev.toFixed(2)})</span>
+                        </div>
+                    `;
+                    resultsList.appendChild(card);
+                });
+                
+            } catch (err) {
+                console.error("NLP Search invocation failed", err);
+                resultsList.innerHTML = `<div style="color:var(--danger); padding:2rem; text-align:center;">Search failed: ${err.message}</div>`;
+            }
         }
     </script>
 </body>

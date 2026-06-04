@@ -4,6 +4,8 @@ import joblib
 import numpy as np
 import pandas as pd
 from flask import Flask, request, jsonify, render_template
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__, template_folder='templates')
 
@@ -14,6 +16,8 @@ METRICS_JSON_PATH = "model_evaluation_metrics.json"
 df = None
 unique_metadata = {}
 metrics_report = {}
+tfidf_vectorizer = None
+tfidf_matrix = None
 
 # ML Deployed models
 model_severity = None
@@ -21,7 +25,7 @@ model_disposition = None
 model_repetitive = None
 
 def initialize_dashboard_backend():
-    global df, unique_metadata, metrics_report, model_severity, model_disposition, model_repetitive
+    global df, unique_metadata, metrics_report, model_severity, model_disposition, model_repetitive, tfidf_vectorizer, tfidf_matrix
     
     if not os.path.exists(CSV_PATH):
         raise FileNotFoundError(f"Cleaned dataset not found at {CSV_PATH}")
@@ -67,6 +71,26 @@ def initialize_dashboard_backend():
     if os.path.exists("best_model_repetitive.joblib"):
         print("Loading deployed Repetitive Issue model...")
         model_repetitive = joblib.load("best_model_repetitive.joblib")
+
+    # Fit TF-IDF Vectorizer on search corpus
+    print("Fitting TF-IDF Vectorizer on search corpus...")
+    corpus_columns = [
+        'Problem Description',
+        'Item',
+        'Defect Type',
+        'Defect Sub-type Description',
+        'Problem Nature Keywords',
+        'Product',
+        'Project'
+    ]
+    search_corpus = df[corpus_columns].fillna('').agg(' '.join, axis=1)
+    tfidf_vectorizer = TfidfVectorizer(
+        stop_words='english',
+        sublinear_tf=True,
+        ngram_range=(1, 2)
+    )
+    tfidf_matrix = tfidf_vectorizer.fit_transform(search_corpus)
+    print("TF-IDF fit complete. Matrix shape:", tfidf_matrix.shape)
 
 @app.route('/')
 def home():
@@ -269,6 +293,21 @@ def get_trends():
             'series': {status_col: list(status_year_ct[status_col].astype(int)) for status_col in status_columns}
         }
         
+        # 8. RCA global distributions
+        top_nc_types = f_df['NC Categorization'].value_counts().head(10).to_dict()
+        
+        product_defect_ct = pd.crosstab(f_df[f_df['Product'].isin(top_5_products)]['Product'], f_df['Defect Type'])
+        product_defect_ct = product_defect_ct[product_defect_ct.columns.intersection(top_5_defects)]
+        defect_product_data = {
+            'products': list(product_defect_ct.index),
+            'defects': {col: list(product_defect_ct[col].astype(int)) for col in product_defect_ct.columns}
+        }
+        
+        # Extract top unique learnings
+        learnings_series = f_df['Learning Derived'].dropna().astype(str).str.strip()
+        learnings_series = learnings_series[~learnings_series.isin(['', '--', 'UNKNOWN', 'nan', 'None'])]
+        top_learnings = list(learnings_series.unique()[:8])
+        
         return jsonify({
             'kpis': kpis,
             'complaint_volume': {
@@ -306,6 +345,11 @@ def get_trends():
             'milestone_status': {
                 'pct_milestone_year': pct_milestone_year,
                 'status_data': status_data
+            },
+            'rca_global': {
+                'top_nc_types': top_nc_types,
+                'defect_product': defect_product_data,
+                'learnings': top_learnings
             }
         })
     except Exception as e:
@@ -425,6 +469,124 @@ def run_predictions():
         
     except Exception as e:
         print(f"Prediction error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/nlp_search', methods=['POST'])
+def run_nlp_search():
+    try:
+        data = request.json or {}
+        query = data.get('query', '').strip()
+        start_year = int(data.get('start_year', 2014))
+        end_year = int(data.get('end_year', 2026))
+        region = data.get('region', '')
+        unit = data.get('unit', '')
+        project = data.get('project', '')
+        product = data.get('product', '')
+        status = data.get('status', '')
+        limit = int(data.get('limit', 100))
+        
+        # Filter dataframe first
+        f_df = df.copy()
+        f_df = f_df[(f_df['Complaint Year'] >= start_year) & (f_df['Complaint Year'] <= end_year)]
+        
+        if region:
+            f_df = f_df[f_df['Region'] == region]
+        if unit:
+            f_df = f_df[f_df['Unit'] == unit]
+        if project:
+            f_df = f_df[f_df['Project'] == project]
+        if product:
+            f_df = f_df[f_df['Product'] == product]
+        if status:
+            f_df = f_df[f_df['Status'] == status]
+            
+        if f_df.empty:
+            return jsonify({
+                'results': [],
+                'total_results': 0,
+                'query_tokens': [],
+                'rca_summary': {
+                    'top_defects': {},
+                    'top_nc': {},
+                    'top_vendors': {},
+                    'avg_resolution_days': 0,
+                    'avg_severity': 0,
+                    'learnings': []
+                }
+            })
+            
+        indices = f_df.index.tolist()
+        
+        # Calculate similarities if query exists
+        if query and tfidf_vectorizer is not None:
+            query_vec = tfidf_vectorizer.transform([query])
+            # Slice tfidf_matrix to only include filtered indices
+            sliced_matrix = tfidf_matrix[indices]
+            sims = cosine_similarity(query_vec, sliced_matrix).flatten()
+            
+            f_df = f_df.copy()
+            f_df['score'] = sims
+            
+            # Filter out documents that have 0 similarity
+            f_df = f_df[f_df['score'] > 0]
+            
+            # Sort by score descending, then by Sno descending
+            f_df = f_df.sort_values(by=['score', 'Sno'], ascending=[False, False])
+        else:
+            f_df = f_df.copy()
+            f_df['score'] = 0.0
+            f_df = f_df.sort_values(by='Complaint Date', ascending=False)
+            
+        total_results = len(f_df)
+        
+        # Slice to limit
+        top_results_df = f_df.head(limit)
+        
+        # Replace NaN with None for JSON compliance
+        top_results_df = top_results_df.replace({np.nan: None})
+        results = top_results_df.to_dict(orient='records')
+        
+        # Compute RCA summary of the matched subset
+        matched_rca_df = f_df[f_df['score'] > 0] if query else f_df
+        if matched_rca_df.empty:
+            matched_rca_df = f_df
+            
+        top_defects = matched_rca_df['Defect Type'].value_counts().head(3).to_dict()
+        top_nc = matched_rca_df['NC Categorization'].value_counts().head(3).to_dict()
+        top_vendors = matched_rca_df['Vendor Name'].value_counts().head(3).to_dict()
+        
+        avg_res = matched_rca_df['Days Taken for Disposition'].dropna()
+        avg_res_days = float(avg_res.mean()) if not avg_res.empty else 0.0
+        
+        avg_sev = matched_rca_df['Severity Rating (Given by Unit)'].dropna()
+        avg_sev_val = float(avg_sev.mean()) if not avg_sev.empty else 0.0
+        
+        # Learnings sample
+        learnings = matched_rca_df['Learning Derived'].dropna().astype(str).str.strip()
+        learnings = learnings[~learnings.isin(['', '--', 'UNKNOWN', 'nan', 'None'])]
+        learnings = list(learnings.unique()[:5])
+        
+        rca_summary = {
+            'top_defects': top_defects,
+            'top_nc': top_nc,
+            'top_vendors': top_vendors,
+            'avg_resolution_days': round(avg_res_days, 1),
+            'avg_severity': round(avg_sev_val, 2),
+            'learnings': learnings
+        }
+        
+        # Extract query tokens for highlighting in frontend
+        stop_words = tfidf_vectorizer.get_stop_words() or set() if tfidf_vectorizer else set()
+        query_tokens = [w for w in query.lower().split() if w not in stop_words] if query else []
+        
+        return jsonify({
+            'results': results,
+            'total_results': total_results,
+            'query_tokens': query_tokens,
+            'rca_summary': rca_summary
+        })
+    except Exception as e:
+        print(f"Error during NLP search: {e}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
