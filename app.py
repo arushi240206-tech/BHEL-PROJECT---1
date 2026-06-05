@@ -61,16 +61,17 @@ def initialize_dashboard_backend():
         with open(METRICS_JSON_PATH, 'r') as f:
             metrics_report = json.load(f)
             
-    # Load ML models
-    if os.path.exists("best_model_severity.joblib"):
-        print("Loading deployed Severity model...")
-        model_severity = joblib.load("best_model_severity.joblib")
-    if os.path.exists("best_model_disposition.joblib"):
-        print("Loading deployed Disposition Time model...")
-        model_disposition = joblib.load("best_model_disposition.joblib")
-    if os.path.exists("best_model_repetitive.joblib"):
-        print("Loading deployed Repetitive Issue model...")
-        model_repetitive = joblib.load("best_model_repetitive.joblib")
+    # Load 10x ML models dynamically
+    import glob
+    global models_10x
+    models_10x = {}
+    models_dir = "models_10x"
+    if os.path.exists(models_dir):
+        print(f"Loading deployed 10x models from {models_dir}...")
+        for filepath in glob.glob(f"{models_dir}/*.joblib"):
+            task_name = os.path.basename(filepath).replace(".joblib", "")
+            models_10x[task_name] = joblib.load(filepath)
+            print(f" Loaded {task_name}...")
 
     # Fit TF-IDF Vectorizer on search corpus
     print("Fitting TF-IDF Vectorizer on search corpus...")
@@ -98,7 +99,25 @@ def home():
 
 @app.route('/api/metadata', methods=['GET'])
 def get_metadata():
-    return jsonify(unique_metadata)
+    return jsonify({
+        'status': 'success',
+        'filters': unique_metadata
+    })
+
+@app.route('/api/ml_metadata', methods=['GET'])
+def get_ml_metadata():
+    # Return available models and their required features
+    try:
+        available_models = {}
+        for task_name, pkg in models_10x.items():
+            available_models[task_name] = {
+                'features': pkg.get('features', []),
+                'is_nlp': pkg.get('is_nlp', False),
+                'label_mappings': {k: list(v.keys()) for k, v in pkg.get('label_mappings', {}).items()}
+            }
+        return jsonify({'status': 'success', 'models': available_models})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/metrics', methods=['GET'])
 def get_metrics():
@@ -356,115 +375,80 @@ def get_trends():
         print(f"Error serving trends: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/predict', methods=['POST'])
-def run_predictions():
+@app.route('/api/predict_multiple', methods=['POST'])
+def predict_multiple():
     try:
         data = request.json or {}
+        requested_targets = data.get('targets', [])
+        inputs = data.get('features', {})
         
-        # Check if models are loaded
-        if not model_severity or not model_disposition or not model_repetitive:
-            return jsonify({'error': 'Models are not fully loaded on backend.'}), 500
+        if not models_10x:
+            return jsonify({'error': '10x Models are not loaded on backend.'}), 500
             
-        # Parse inputs
-        product = str(data.get('product', 'UNKNOWN')).strip().upper()
-        region = str(data.get('region', 'UNKNOWN')).strip().upper()
-        defect_type = str(data.get('defect_type', 'UNKNOWN')).strip().upper()
-        severity_site = float(data.get('severity_site', 0.5))
-        complaint_type = str(data.get('complaint_type', 'UNKNOWN')).strip().upper()
-        shop_boi = str(data.get('shop_boi', 'UNKNOWN')).strip().upper()
-        unit = str(data.get('unit', 'UNKNOWN')).strip().upper()
-        cost_debitable = str(data.get('cost_debitable', 'UNKNOWN')).strip().upper()
-        milestone_affected = str(data.get('milestone_affected', 'UNKNOWN')).strip().upper()
-        complaint_date_str = str(data.get('complaint_date', '2026-06-04'))
-        debit_claimed = float(data.get('debit_claimed', 0))
+        results = {}
         
-        # DateTime features
-        dt = pd.to_datetime(complaint_date_str, errors='coerce')
-        if pd.isnull(dt):
-            dt = pd.to_datetime('2026-06-04')
-        year = dt.year
-        month = dt.month
-        quarter = dt.quarter
-        dayofweek = dt.dayofweek
-        
-        # Estimate complaint frequency: monthly count in historical dataset or fallback
-        hist_count = df[(df['Complaint Year'] == year) & (df['Complaint Date'].dt.month == month)]
-        if not hist_count.empty:
-            freq_monthly = float(len(hist_count))
-        else:
-            freq_monthly = float(df.groupby([df['Complaint Date'].dt.year, df['Complaint Date'].dt.month]).size().mean())
+        for task_name in requested_targets:
+            if task_name not in models_10x:
+                results[task_name] = {'error': 'Model not found'}
+                continue
+                
+            pkg = models_10x[task_name]
+            model = pkg['model']
+            scaler = pkg['scaler']
+            is_nlp = pkg['is_nlp']
+            features = pkg['features']
+            label_mappings = pkg['label_mappings']
+            inv_target_map = pkg['inv_target_map']
+            vectorizer = pkg.get('vectorizer')
             
-        # Get label mappings from metadata
-        mappings = metrics_report['metadata']['label_mappings']
-        
-        def encode_val(col, val):
-            mapping = mappings.get(col, {})
-            return mapping.get(val, mapping.get('UNKNOWN', 0))
+            if is_nlp:
+                prob_desc = str(inputs.get('Problem_Description', ''))
+                X_vec = vectorizer.transform([prob_desc])
+                X_final = X_vec
+            else:
+                # Build feature row
+                row = []
+                for f in features:
+                    val_str = str(inputs.get(f, 'UNKNOWN')).strip().upper()
+                    # Map it
+                    mapping = label_mappings.get(f, {})
+                    enc_val = mapping.get(val_str, mapping.get('UNKNOWN', 0))
+                    row.append(enc_val)
+                X_arr = np.array([row])
+                X_final = scaler.transform(X_arr) if scaler else X_arr
+                
+            # Predict
+            pred = model.predict(X_final)[0]
             
-        # Build features dict
-        feat_dict = {
-            'Product': encode_val('Product', product),
-            'Region': encode_val('Region', region),
-            'Defect_Type': encode_val('Defect_Type', defect_type),
-            'Severity_Rating_Given_by_Site': severity_site,
-            'Complaint_Type': encode_val('Complaint_Type', complaint_type),
-            'ShopBOI_Given_by_Site': encode_val('ShopBOI_Given_by_Site', shop_boi),
-            'Unit': encode_val('Unit', unit),
-            'Cost_Debitable': encode_val('Cost_Debitable', cost_debitable),
-            'Will_Milestone_Get_Affected_Given_by_Site': encode_val('Will_Milestone_Get_Affected_Given_by_Site', milestone_affected),
-            'Complaint_Year': year,
-            'Complaint_Month': month,
-            'Complaint_Quarter': quarter,
-            'Complaint_DayOfWeek': dayofweek,
-            'Complaint_Frequency_Monthly': freq_monthly,
-            'Debit_Claimed_INR': debit_claimed
-        }
-        
-        # Order features exactly as expected by models
-        features_order = model_severity['features']
-        feature_vec = np.array([[feat_dict[f] for f in features_order]])
-        
-        # 1. Predict Target A (Severity)
-        scaler_a = model_severity['scaler']
-        model_a = model_severity['model']
-        target_map_a = model_severity['target_mapping']
-        
-        X_a = scaler_a.transform(feature_vec) if scaler_a else feature_vec
-        pred_a_idx = int(model_a.predict(X_a)[0])
-        pred_severity_val = float(target_map_a[pred_a_idx])
-        
-        if hasattr(model_a, "predict_proba"):
-            probs_a = model_a.predict_proba(X_a)[0]
-            conf_a = float(probs_a[pred_a_idx])
-        else:
-            conf_a = 1.0
-            
-        # 2. Predict Target B (Disposition Days)
-        scaler_b = model_disposition['scaler']
-        model_b = model_disposition['model']
-        X_b = scaler_b.transform(feature_vec) if scaler_b else feature_vec
-        pred_days = float(model_b.predict(X_b)[0])
-        pred_days = max(0.0, pred_days) # disposition days cannot be negative
-        
-        # 3. Predict Target C (Repetitive Issue Y/N)
-        scaler_c = model_repetitive['scaler']
-        model_c = model_repetitive['model']
-        X_c = scaler_c.transform(feature_vec) if scaler_c else feature_vec
-        pred_c_idx = int(model_c.predict(X_c)[0])
-        pred_repetitive = "Y" if pred_c_idx == 1 else "N"
-        
-        if hasattr(model_c, "predict_proba"):
-            probs_c = model_c.predict_proba(X_c)[0]
-            conf_c = float(probs_c[pred_c_idx])
-        else:
-            conf_c = 1.0
-            
+            if inv_target_map: # classification
+                # Ensure the pred is int-like for dictionary lookup if necessary
+                if isinstance(pred, (np.integer, int, float)) and int(pred) in inv_target_map:
+                    pred_label = inv_target_map[int(pred)]
+                else:
+                    pred_label = inv_target_map.get(pred, str(pred))
+                
+                # Confidence
+                if hasattr(model, 'predict_proba'):
+                    probs = model.predict_proba(X_final)[0]
+                    idx = list(model.classes_).index(pred) if pred in model.classes_ else 0
+                    conf = float(probs[idx])
+                else:
+                    conf = 1.0
+                    
+                results[task_name] = {
+                    'prediction': str(pred_label),
+                    'confidence': round(conf * 100, 1),
+                    'type': 'classification'
+                }
+            else: # regression
+                results[task_name] = {
+                    'prediction': round(float(pred), 2),
+                    'type': 'regression'
+                }
+                
         return jsonify({
-            'predicted_severity': pred_severity_val,
-            'predicted_severity_confidence': round(conf_a * 100, 1),
-            'predicted_disposition_days': round(pred_days, 1),
-            'predicted_repetitive': pred_repetitive,
-            'predicted_repetitive_confidence': round(conf_c * 100, 1)
+            'status': 'success',
+            'predictions': results
         })
         
     except Exception as e:
