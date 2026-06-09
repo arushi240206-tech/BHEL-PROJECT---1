@@ -1,0 +1,140 @@
+[
+  {
+    "task_name": "Resolution_Time",
+    "best_model": "RandomForest",
+    "score": 138.6457577445985,
+    "is_classification": false,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code",
+      "Defect_Type"
+    ]
+  },
+  {
+    "task_name": "Severity",
+    "best_model": "LightGBM",
+    "score": 0.6582278481012658,
+    "is_classification": true,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code",
+      "Defect_Type"
+    ]
+  },
+  {
+    "task_name": "Cost",
+    "best_model": "RandomForest",
+    "score": 69723.4184653156,
+    "is_classification": false,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code",
+      "Defect_Type"
+    ]
+  },
+  {
+    "task_name": "Repeat_Failure",
+    "best_model": "Logistic",
+    "score": 0.9911775987725355,
+    "is_classification": true,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code",
+      "Defect_Type"
+    ]
+  },
+  {
+    "task_name": "Vendor_Risk",
+    "best_model": "LightGBM",
+    "score": 1.60592835023897,
+    "is_classification": false,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code"
+    ]
+  },
+  {
+    "task_name": "Defect_Root_Cause",
+    "best_model": "RandomForest",
+    "score": 0.43229766014576143,
+    "is_classification": true,
+    "features": []
+  },
+  {
+    "task_name": "Escalation",
+    "best_model": "LightGBM",
+    "score": 0.7399309551208285,
+    "is_classification": true,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code"
+    ]
+  },
+  {
+    "task_name": "Delay",
+    "best_model": "LightGBM",
+    "score": 0.6866129650939777,
+    "is_classification": true,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code",
+      "Defect_Type"
+    ]
+  },
+  {
+    "task_name": "Warranty_Recovery",
+    "best_model": "LightGBM",
+    "score": 0.7349443805140008,
+    "is_classification": true,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code"
+    ]
+  },
+  {
+    "task_name": "Reliability",
+    "best_model": "LightGBM",
+    "score": 12.297212447808832,
+    "is_classification": false,
+    "features": [
+      "Product",
+      "Item",
+      "Complaint_Type",
+      "Unit",
+      "Region",
+      "Vendor_Code"
+    ]
+  }
+]

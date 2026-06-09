@@ -13,26 +13,26 @@
     
     <style>
         :root {
-            --bhel-blue: #0ea5e9; /* more vibrant blue */
-            --bhel-orange: #f97316;
-            --bg-dark: #0f172a;
-            --bg-darker: #020617;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bhel-blue: #003594;
+            --bhel-orange: #F7941D;
+            --bg-color: #f4f6fa;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
             --success: #10b981;
             --danger: #ef4444;
-            --primary-glow: rgba(14, 165, 233, 0.5);
-            --glass-blur: 16px;
+            --primary-glow: rgba(0, 53, 148, 0.08);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
-            background: radial-gradient(circle at top left, #1e1b4b, var(--bg-darker));
-            background-size: cover;
-            background-attachment: fixed;
+            background-color: var(--bg-color);
             font-family: 'Inter', sans-serif;
             color: var(--text-main);
             min-height: 100vh;
@@ -41,20 +41,14 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, .outfit-font { font-family: 'Outfit', sans-serif; }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-darker); }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        h1, h2, h3, h4, .outfit-font {
+            font-family: 'Outfit', sans-serif;
+        }
 
         /* Top Header */
         header {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(var(--glass-blur));
-            -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-bottom: 1px solid var(--border-color);
+            background: #ffffff;
+            border-bottom: 2px solid var(--bhel-blue);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -62,375 +56,739 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        .header-logo { display: flex; align-items: center; gap: 1rem; }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
         .bhel-logo-mark {
-            background: linear-gradient(135deg, var(--bhel-blue), #3b82f6);
+            background: var(--bhel-blue);
             color: #ffffff;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             font-weight: 800;
             font-size: 1.3rem;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 2px solid var(--bhel-orange);
             letter-spacing: 1px;
-            box-shadow: 0 0 15px var(--primary-glow);
         }
 
         .header-title h1 {
-            font-size: 1.45rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--bhel-blue);
         }
 
-        .header-title p { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-top: 0.2rem; }
+        .header-title p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
 
         /* Layout Grid */
         .app-layout {
             display: grid;
             grid-template-columns: 260px 1fr;
             flex: 1;
-            min-height: calc(100vh - 75px);
+            height: calc(100vh - 75px);
+            overflow: hidden;
         }
 
         /* Sidebar */
         .sidebar {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(var(--glass-blur));
+            background: #ffffff;
             border-right: 1px solid var(--border-color);
             padding: 1.5rem 1rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow-y: auto;
+            height: 100%;
         }
 
-        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
 
         .nav-item {
-            display: flex; align-items: center; gap: 0.75rem;
-            padding: 0.85rem 1rem; border-radius: 0.5rem;
-            color: var(--text-muted); text-decoration: none;
-            font-weight: 500; font-size: 0.95rem;
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .nav-item::before {
-            content: '';
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.5s;
+        .nav-item:hover {
+            background: rgba(0, 53, 148, 0.05);
+            color: var(--bhel-blue);
         }
-
-        .nav-item:hover::before { transform: translateX(100%); }
-        .nav-item:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
 
         .nav-item.active {
-            background: linear-gradient(135deg, var(--bhel-blue), #2563eb);
-            color: #ffffff; font-weight: 600;
-            box-shadow: 0 4px 15px var(--primary-glow);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bhel-blue);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 53, 148, 0.15);
         }
 
-        .nav-item svg { width: 18px; height: 18px; transition: transform 0.3s; }
-        .nav-item:hover svg { transform: scale(1.1); }
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+        }
 
         .sidebar-footer {
             border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem; font-size: 0.8rem;
-            color: var(--text-muted); text-align: center;
+            padding-top: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
         }
 
         /* Dashboard Workspace */
         .workspace {
-            padding: 2rem; display: flex; flex-direction: column; gap: 2rem;
-            overflow-y: auto; max-width: 1400px; width: 100%; margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            overflow-y: auto;
+            width: 100%;
+            height: 100%;
+            min-width: 0;
         }
 
         /* Global Filter Header */
         .filter-banner {
-            background: var(--card-bg);
-            backdrop-filter: blur(var(--glass-blur));
+            background: #ffffff;
             border: 1px solid var(--border-color);
-            border-radius: 1rem; padding: 1.25rem 1.5rem;
-            display: flex; flex-wrap: nowrap; gap: 1rem; align-items: flex-end; justify-content: space-between;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            position: relative; overflow-x: auto;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
-        .filter-banner::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(14,165,233,0.1) 0%, transparent 60%);
-            z-index: 0; pointer-events: none;
-        }
-
-        .filter-banner > * { position: relative; z-index: 1; }
 
         .filter-banner .title {
-            font-size: 1rem; font-weight: 700; color: #38bdf8;
-            display: flex; align-items: center; gap: 0.5rem;
-            margin-bottom: 0.5rem; /* alignment tweak */
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--bhel-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .filter-group { display: flex; flex-direction: column; gap: 0.4rem; }
-        .filter-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
 
         .filter-select {
-            padding: 0.6rem 1rem; border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
             border: 1px solid var(--border-color);
-            font-family: inherit; font-size: 0.9rem;
-            color: var(--text-main); outline: none;
-            background: rgba(15, 23, 42, 0.8);
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            outline: none;
+            background: #fff;
             min-width: 160px;
-            transition: all 0.3s;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1em;
         }
-        .filter-select:focus { border-color: var(--bhel-blue); box-shadow: 0 0 0 2px var(--primary-glow); }
-        .filter-select option { background: #0f172a; color: #fff; }
+
+        .filter-select:focus {
+            border-color: var(--bhel-blue);
+        }
 
         /* Slider styles */
-        .slider-container { display: flex; align-items: center; gap: 1rem; min-width: 250px; }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 250px;
+        }
 
         .year-label {
-            font-size: 0.85rem; font-weight: 700; color: var(--text-main);
-            background: rgba(255,255,255,0.1); padding: 0.3rem 0.6rem;
-            border-radius: 0.3rem; min-width: 45px; text-align: center;
-            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--bhel-blue);
+            background: rgba(0, 53, 148, 0.05);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            min-width: 45px;
+            text-align: center;
         }
 
         .slider-control {
-            flex: 1; height: 6px; background: rgba(255,255,255,0.1);
-            border-radius: 3px; outline: none; -webkit-appearance: none;
+            flex: 1;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
         }
 
         .slider-control::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 18px; height: 18px;
-            border-radius: 50%; background: var(--bhel-blue);
-            cursor: pointer; border: 2px solid #fff;
-            box-shadow: 0 0 10px var(--primary-glow);
-            transition: transform 0.2s;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bhel-orange);
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .slider-control::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
         /* Top Summary KPIs */
-        .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem; }
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+        }
 
         .kpi-card {
-            background: var(--card-bg); backdrop-filter: blur(var(--glass-blur));
+            background: #ffffff;
             border: 1px solid var(--border-color);
             border-top: 4px solid var(--bhel-blue);
-            border-radius: 1rem; padding: 1rem;
-            display: flex; flex-direction: column; gap: 0.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative; overflow: hidden;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .kpi-card::after {
-            content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            border-radius: 50%; transform: translate(30%, -30%);
+        .kpi-card:nth-child(even) {
+            border-top-color: var(--bhel-orange);
         }
 
-        .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .kpi-card:nth-child(even) { border-top-color: var(--bhel-orange); }
+        .kpi-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
 
-        .kpi-label { font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted); }
         .kpi-value {
-            font-size: 1.25rem; font-weight: 800;
-            background: linear-gradient(to right, #fff, #93c5fd);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            word-wrap: break-word;
-        }
-        .kpi-card:nth-child(even) .kpi-value {
-            background: linear-gradient(to right, #fff, #fdba74);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--bhel-blue);
         }
 
         /* Dashboard Views */
-        .dashboard-view { display: none; flex-direction: column; gap: 2rem; animation: fadeUpIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .dashboard-view.active { display: flex; }
+        .dashboard-view {
+            display: none;
+            flex-direction: column;
+            gap: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
 
-        @keyframes fadeUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .dashboard-view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* Content Cards Grid */
-        .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-        .chart-grid.three-col { grid-template-columns: repeat(3, 1fr); }
-        .chart-grid.full-width { grid-template-columns: 1fr; }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .chart-grid.three-col {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .chart-grid.full-width {
+            grid-template-columns: 1fr;
+        }
 
         .chart-card {
-            background: var(--card-bg); backdrop-filter: blur(var(--glass-blur));
-            border: 1px solid var(--border-color); border-radius: 1rem;
-            padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            display: flex; flex-direction: column; gap: 1rem;
-            transition: border-color 0.3s;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
         }
-        .chart-card:hover { border-color: rgba(14, 165, 233, 0.3); }
 
-        .chart-card.span-2 { grid-column: span 2; }
+        .chart-card.span-2 {
+            grid-column: span 2;
+        }
 
         .chart-card-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
         }
 
-        .chart-title { font-size: 1.1rem; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 0.5rem;}
-        .chart-title::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--bhel-blue); box-shadow: 0 0 8px var(--bhel-blue); }
+        .chart-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--bhel-blue);
+        }
 
-        .chart-actions { display: flex; gap: 0.5rem; }
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
 
         .chart-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 0.4rem 0.8rem; border-radius: 0.4rem;
-            font-size: 0.75rem; font-weight: 600; color: var(--text-main);
-            cursor: pointer; transition: all 0.2s;
+            background: rgba(0, 53, 148, 0.05);
+            border: none;
+            padding: 0.35rem 0.6rem;
+            border-radius: 0.25rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--bhel-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s;
         }
-        .chart-btn:hover { background: var(--bhel-blue); border-color: var(--bhel-blue); color: #fff; box-shadow: 0 0 10px var(--primary-glow); }
 
-        .chart-wrapper { position: relative; width: 100%; min-height: 320px; }
+        .chart-btn:hover {
+            background: var(--bhel-blue);
+            color: #fff;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 300px;
+        }
 
         /* Tables */
-        .table-wrapper { overflow-x: auto; width: 100%; border-radius: 0.5rem; }
-
-        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.95rem; text-align: left; }
-        th {
-            background: rgba(15, 23, 42, 0.8); color: #38bdf8; font-weight: 700;
-            padding: 1rem; border-bottom: 1px solid var(--border-color);
-            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em;
+        .table-wrapper {
+            overflow-x: auto;
+            width: 100%;
         }
-        td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-main); }
-        tr { transition: background 0.2s; }
-        tr:hover td { background: rgba(255,255,255,0.05); }
 
-        .green-highlight { background: rgba(16, 185, 129, 0.1) !important; border-left: 4px solid var(--success); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(0, 53, 148, 0.03);
+            color: var(--bhel-blue);
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        tr:hover td {
+            background: rgba(0,53,148,0.01);
+        }
+
+        .green-highlight {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border-left: 4px solid var(--success);
+        }
+
+        /* Model Walkthrough Steps styling */
+        .walkthrough-status {
+            background: var(--bhel-blue);
+            color: #fff;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
 
         /* Prediction Form */
-        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .form-group.full-width { grid-column: span 3; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
 
-        .form-group label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 3;
+        }
+
+        .form-group label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--bhel-blue);
+            text-transform: uppercase;
+        }
 
         .form-input {
-            width: 100%; padding: 0.8rem 1rem; border-radius: 0.5rem;
-            border: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem;
-            outline: none; font-family: inherit; background: rgba(15, 23, 42, 0.6);
-            color: #fff; transition: all 0.3s;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
         }
-        .form-input:focus { border-color: var(--bhel-blue); box-shadow: 0 0 15px rgba(14, 165, 233, 0.3); background: rgba(15, 23, 42, 0.9); }
-        select.form-input {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1em;
+
+        .form-input:focus {
+            border-color: var(--bhel-blue);
+            box-shadow: 0 0 0 3px rgba(0, 53, 148, 0.1);
         }
-        select.form-input option { background: #0f172a; color: #fff; }
 
         .btn {
-            background: linear-gradient(135deg, #0ea5e9, #2563eb);
-            color: #ffffff; border: none; border-radius: 0.5rem;
-            padding: 0.85rem 2rem; font-weight: 700; font-size: 1rem;
-            cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
-            width: fit-content; text-transform: uppercase; letter-spacing: 0.05em;
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
-            position: relative; overflow: hidden;
+            background: var(--bhel-blue);
+            color: #ffffff;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.85rem 1.75rem;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: fit-content;
         }
-        .btn::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg) translateX(-100%); transition: transform 0.6s;
+
+        .btn:hover {
+            background: #002366;
+            box-shadow: 0 4px 12px rgba(0,53,148,0.2);
         }
-        .btn:hover::after { transform: rotate(45deg) translateX(100%); }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.6); }
 
         .btn-orange {
-            background: linear-gradient(135deg, #f97316, #ea580c);
-            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+            background: var(--bhel-orange);
         }
-        .btn-orange:hover { box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6); }
+        .btn-orange:hover {
+            background: #d67a13;
+            box-shadow: 0 4px 12px rgba(247,148,29,0.2);
+        }
 
         /* Prediction Result Panel */
         .prediction-result-panel {
-            margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 2rem; display: none; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
-            animation: fadeIn 0.5s ease;
+            margin-top: 1.5rem;
+            border-top: 2px solid var(--border-color);
+            padding-top: 1.5rem;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
         }
 
         .prediction-outcome-card {
-            background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(14, 165, 233, 0.3);
-            border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
-            position: relative; overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.05);
-        }
-        .prediction-outcome-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--bhel-blue);
+            background: rgba(0, 53, 148, 0.03);
+            border: 1px solid rgba(0, 53, 148, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .prediction-outcome-card.repetitive {
-            border-color: rgba(249, 115, 22, 0.3);
-            box-shadow: inset 0 0 20px rgba(249, 115, 22, 0.05);
+            background: rgba(247, 148, 29, 0.03);
+            border-color: rgba(247, 148, 29, 0.1);
         }
-        .prediction-outcome-card.repetitive::before { background: var(--bhel-orange); }
 
-        .prediction-outcome-card .label { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        .prediction-outcome-card .val { font-size: 2.2rem; font-weight: 800; color: #fff; }
-        .prediction-outcome-card.repetitive .val { color: #fdba74; }
+        .prediction-outcome-card .label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .prediction-outcome-card .val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--bhel-blue);
+        }
+
+        .prediction-outcome-card.repetitive .val {
+            color: var(--bhel-orange);
+        }
 
         .confidence-bar-bg {
-            background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px;
-            width: 100%; overflow: hidden; margin-top: 0.25rem;
+            background: var(--border-color);
+            height: 8px;
+            border-radius: 4px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 0.25rem;
         }
+
         .confidence-bar-fill {
-            background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-            height: 100%; border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px rgba(14, 165, 233, 0.8);
+            background: var(--bhel-blue);
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.8s ease;
         }
+
         .prediction-outcome-card.repetitive .confidence-bar-fill {
-            background: linear-gradient(90deg, #f97316, #fb923c);
-            box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
+            background: var(--bhel-orange);
         }
 
         /* Spinner */
         .spinner {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top: 3px solid #fff; border-radius: 50%;
-            width: 1.5rem; height: 1.5rem; animation: spin 0.8s linear infinite;
+            border: 3px solid rgba(0,0,0,0.05);
+            border-top: 3px solid var(--bhel-blue);
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            animation: spin 0.8s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         /* Empty State */
         .empty-filter-state {
-            display: flex; align-items: center; justify-content: center;
-            padding: 4rem; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(var(--glass-blur));
-            border-radius: 1rem; border: 1px dashed rgba(255,255,255,0.2);
-            text-align: center; font-weight: 500; color: var(--text-muted);
-            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            background: #fff;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        /* Premium NLP Search Styles */
+        .nlp-search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .search-card-custom {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 53, 148, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+        .search-bar-custom {
+            display: flex;
+            background: #f8fafc;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            transition: all 0.25s ease;
+            align-items: center;
+        }
+        .search-bar-custom:focus-within {
+            border-color: var(--bhel-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 53, 148, 0.1);
+        }
+        .search-input-custom {
+            border: none;
+            background: transparent;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            flex: 1;
+            outline: none;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+        .search-button-custom {
+            background: var(--bhel-orange);
+            color: white;
+            border: none;
+            border-radius: 0.35rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .search-button-custom:hover {
+            background: #e08316;
+            box-shadow: 0 4px 12px rgba(247, 148, 29, 0.25);
+        }
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .suggestion-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .chip {
+            background: rgba(0, 53, 148, 0.04);
+            color: var(--bhel-blue);
+            border: 1px solid rgba(0, 53, 148, 0.08);
+            border-radius: 2rem;
+            padding: 0.35rem 0.95rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chip:hover {
+            background: var(--bhel-blue);
+            color: white;
+            border-color: var(--bhel-blue);
+        }
+        .kpi-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        .kpi-mini-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .kpi-mini-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .kpi-mini-val {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--bhel-blue);
+        }
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .progress-item-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .progress-bar-bg {
+            background: #e2e8f0;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .progress-bar-fill {
+            background: var(--bhel-blue);
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        .progress-bar-fill.orange {
+            background: var(--bhel-orange);
+        }
+        .progress-bar-fill.green {
+            background: #10b981;
+        }
+        .learning-note-card {
+            background: rgba(247, 148, 29, 0.02);
+            border: 1px solid rgba(247, 148, 29, 0.08);
+            border-left: 3px solid var(--bhel-orange);
+            border-radius: 0.35rem;
+            padding: 0.65rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            line-height: 1.35;
+        }
+        .result-pill {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.2rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+        .result-pill.blue {
+            background: rgba(0, 53, 148, 0.05);
+            color: var(--bhel-blue);
+        }
+        .result-pill.orange {
+            background: rgba(247, 148, 29, 0.05);
+            color: var(--bhel-orange);
+        }
+        .result-pill.green {
+            background: rgba(16, 185, 129, 0.05);
+            color: #10b981;
+        }
+        .result-card-custom {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .result-card-custom:hover {
+            box-shadow: 0 8px 24px rgba(0, 53, 148, 0.06);
+            border-color: rgba(0, 53, 148, 0.15);
+            transform: translateY(-2px);
         }
     </style>
-
-    <script>
-        // Chart.js Dark Mode Defaults
-        if (typeof Chart !== 'undefined') {
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
-            Chart.defaults.font.family = "'Inter', sans-serif";
-        }
-    </script>
 </head>
-
 <body>
 
     <!-- Top Header -->
@@ -476,6 +834,14 @@
                 <li><div class="nav-item" onclick="switchView('predictions', this)">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                     ML Predictions
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('nlp-search', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    NLP Search
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('rca', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                    RCA Dashboard
                 </div></li>
                 <li><div class="nav-item" onclick="switchView('model-report', this)">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -732,95 +1098,122 @@
             <div id="view-predictions" class="dashboard-view">
                 <div class="chart-card">
                     <div class="chart-card-header">
-                        <h3 class="chart-title">Run Predictive ML Inference</h3>
+                        <h3 class="chart-title">10x ML Prediction Engine</h3>
                     </div>
-                    <form id="prediction-form" onsubmit="runPrediction(event)">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="pred-product">Product</label>
-                                <select id="pred-product" class="form-input" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-region">Region</label>
-                                <select id="pred-region" class="form-input" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-defect">Defect Type</label>
-                                <select id="pred-defect" class="form-input" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-severity-site">Site Severity Rating (0.1 - 1.0)</label>
-                                <input type="number" id="pred-severity-site" class="form-input" min="0.1" max="1.0" step="0.1" value="0.5" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-complaint-type">Complaint Type</label>
-                                <select id="pred-complaint-type" class="form-input" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-shop-boi">Shop / BOI</label>
-                                <select id="pred-shop-boi" class="form-input" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-unit">Unit</label>
-                                <select id="pred-unit" class="form-input" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-cost-debitable">Cost Debitable</label>
-                                <select id="pred-cost-debitable" class="form-input" required>
-                                    <option value="Y">Yes</option>
-                                    <option value="N">No</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-milestone">Milestone Affected (Site)</label>
-                                <select id="pred-milestone" class="form-input" required>
-                                    <option value="Y">Yes</option>
-                                    <option value="N">No</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-date">Complaint Registration Date</label>
-                                <input type="date" id="pred-date" class="form-input" value="2026-06-04" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="pred-debit-claimed">Debit Claimed (INR)</label>
-                                <input type="number" id="pred-debit-claimed" class="form-input" value="0" required>
-                            </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">Step 1: Select Prediction Targets</h4>
+                        <div id="ml-targets-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
+                            <!-- Populated dynamically via JS -->
                         </div>
-                        <div style="margin-top: 1.5rem;">
-                            <button type="submit" class="btn btn-orange" id="predict-submit-btn">
-                                <span>Evaluate SLA & Severity</span>
-                            </button>
-                        </div>
-                    </form>
+                    </div>
+
+                    <div id="ml-features-section" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">Step 2: Enter Required Features</h4>
+                        <form id="prediction-form" onsubmit="runPrediction(event)">
+                            <div class="form-grid" id="ml-dynamic-form-grid">
+                                <!-- Populated dynamically based on union of features -->
+                            </div>
+                            <div style="margin-top: 1.5rem;">
+                                <button type="submit" class="btn btn-orange" id="predict-submit-btn">
+                                    <span>Run Predictions</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
 
                     <!-- Predictions Output -->
-                    <div class="prediction-result-panel" id="prediction-result-panel">
-                        <div class="prediction-outcome-card">
-                            <span class="label">Predicted Unit Severity</span>
-                            <span class="val" id="pred-res-severity">-</span>
-                            <div>
-                                <span style="font-size:0.8rem; color:var(--text-muted);">Confidence Score</span>
-                                <div class="confidence-bar-bg">
-                                    <div class="confidence-bar-fill" id="pred-res-severity-conf"></div>
-                                </div>
+                    <div class="prediction-result-panel" id="prediction-result-panel" style="display: none; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <!-- Results populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: NLP SEARCH ================= -->
+            <div id="view-nlp-search" class="dashboard-view">
+                <div class="search-card-custom">
+                    <div class="search-bar-custom">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.5" style="margin-left: 1rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="nlp-search-query" class="search-input-custom" placeholder="Type search keywords here (e.g. 'spindle passing bonnet leakage', 'handwheel valve issue')..." onkeydown="if(event.key === 'Enter') executeNlpSearch()" />
+                        <button id="nlp-search-btn" class="search-button-custom" onclick="executeNlpSearch()">
+                            NLP Search
+                        </button>
+                    </div>
+                    <div class="suggestion-chips">
+                        <span class="suggestion-label">Suggested Keywords:</span>
+                        <button class="chip" onclick="applySuggestion('bonnet leakage')">Bonnet Leakage</button>
+                        <button class="chip" onclick="applySuggestion('spindle passing')">Spindle Passing</button>
+                        <button class="chip" onclick="applySuggestion('gland leakage')">Gland Leakage</button>
+                        <button class="chip" onclick="applySuggestion('vibration')">Vibration</button>
+                        <button class="chip" onclick="applySuggestion('weld crack')">Weld Crack</button>
+                        <button class="chip" onclick="applySuggestion('material defect')">Material Defect</button>
+                    </div>
+                </div>
+
+                <div id="nlp-two-col" style="display:grid; grid-template-columns: 360px 1fr; gap: 1.5rem; margin-top: 1.5rem; align-items: stretch; min-height: 0;">
+                    <!-- Left: RCA Summary of search results -->
+                    <div class="chart-card" style="border-top: 4px solid var(--bhel-orange); padding: 1.25rem; display:flex; flex-direction:column; overflow-y: auto; min-height: 0;">
+                        <div class="chart-card-header" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; flex-shrink:0;">
+                            <h3 class="chart-title" style="display:flex; align-items:center; gap:0.5rem;">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                AI RCA Context Summary
+                            </h3>
+                        </div>
+                        <div id="nlp-rca-summary" style="flex:1;">
+                            <div style="color:var(--text-muted); font-style:italic; font-size:0.85rem; padding: 1rem 0; text-align:center;">
+                                Type keywords above to run search and analyze root causes.
                             </div>
                         </div>
-                        <div class="prediction-outcome-card">
-                            <span class="label">Predicted Resolution SLA (Days)</span>
-                            <span class="val" id="pred-res-days" style="color: var(--success);">-</span>
-                            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">Fitted model forecasts days required to reach 'Disposed' status.</p>
+                    </div>
+
+                    <!-- Right: Search Results List -->
+                    <div class="chart-card" style="border-top: 4px solid var(--bhel-blue); padding: 1.25rem; display:flex; flex-direction:column; min-height: 0;">
+                        <div class="chart-card-header" style="padding-bottom: 0.5rem; margin-bottom: 0.5rem; flex-shrink: 0;">
+                            <h3 class="chart-title">Matched Complaints</h3>
+                            <span style="font-size:0.75rem; font-weight:700; color:var(--bhel-blue); background:rgba(0,53,148,0.06); padding:0.25rem 0.6rem; border-radius:1rem;">
+                                Matched: <span id="nlp-results-count">0</span>
+                            </span>
                         </div>
-                        <div class="prediction-outcome-card repetitive">
-                            <span class="label">Repetitive Root Cause Risk</span>
-                            <span class="val" id="pred-res-repetitive">-</span>
-                            <div>
-                                <span style="font-size:0.8rem; color:var(--text-muted);">Recurrence Probability</span>
-                                <div class="confidence-bar-bg">
-                                    <div class="confidence-bar-fill" id="pred-res-repetitive-conf"></div>
-                                </div>
+                        <div class="results-list" id="nlp-results-list" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:1rem; padding-right: 0.5rem; min-height: 0;">
+                            <div class="empty-state" style="padding: 4rem 1rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px; height:48px; color:var(--text-muted); margin-bottom:1rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <h3 style="color:var(--text-muted);">Enter keywords to begin search</h3>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">Matches are computed semantically based on TF-IDF word frequency across all descriptions.</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: RCA DASHBOARD ================= -->
+            <div id="view-rca" class="dashboard-view">
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">NC Categorization Breakdown (Top 10)</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-rca-nc"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Defect Type by Product (Top 5 Products)</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-rca-defect-product"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3 class="chart-title">Root Cause Learnings & Action Items</h3>
+                        <p style="font-size:0.8rem; color:var(--text-muted);">Common lessons learned gathered from resolved complaints.</p>
+                    </div>
+                    <div id="rca-learnings-list" style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.9rem; padding: 0.5rem 0;">
+                        <!-- Populate dynamically -->
                     </div>
                 </div>
             </div>
@@ -919,6 +1312,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadMetadata();
             loadMLMetrics();
+            loadMLMetadata();
             triggerUpdate();
         });
 
@@ -929,16 +1323,8 @@
                 metadata = await response.json();
                 
                 // Populate filters
-                populateDropdown(document.getElementById('global-region'), metadata.regions);
-                populateDropdown(document.getElementById('global-unit'), metadata.units);
-                
-                // Populate prediction inputs
-                populateDropdown(document.getElementById('pred-product'), metadata.products);
-                populateDropdown(document.getElementById('pred-region'), metadata.regions);
-                populateDropdown(document.getElementById('pred-defect'), metadata.defects || ['DESIGN ERROR', 'MANUFACTURING DEFECT', 'MATERIAL', 'ERECTION DEVIATION', 'COMMISSIONING ISSUE']);
-                populateDropdown(document.getElementById('pred-complaint-type'), ['SAR', 'CAR']);
-                populateDropdown(document.getElementById('pred-shop-boi'), ['SHOP', 'BOI']);
-                populateDropdown(document.getElementById('pred-unit'), metadata.units);
+                populateDropdown(document.getElementById('global-region'), metadata.filters.regions);
+                populateDropdown(document.getElementById('global-unit'), metadata.filters.units);
             } catch (e) {
                 console.error("Error loading filter metadata:", e);
             }
@@ -978,12 +1364,40 @@
             
             document.querySelectorAll('.dashboard-view').forEach(view => view.classList.remove('active'));
             document.getElementById(`view-${viewId}`).classList.add('active');
+
+            // Scroll workspace back to top on every view switch
+            const ws = document.querySelector('.workspace');
+            if (ws) ws.scrollTop = 0;
             
             // If walkthrough view and metrics loaded, run walkthrough animation
             if (viewId === 'model-report' && mlMetrics && trainingLogs.length === 0) {
                 runWalkthroughAnimation();
             }
+
+            // Resize NLP pane after scroll settles
+            if (viewId === 'nlp-search') {
+                // Double rAF ensures layout is fully painted after scroll reset
+                requestAnimationFrame(() => requestAnimationFrame(resizeNlpPane));
+            }
         }
+
+        // Dynamically size the NLP two-col grid so both panels fill from their top to viewport bottom
+        function resizeNlpPane() {
+            const twoCol = document.getElementById('nlp-two-col');
+            if (!twoCol) return;
+            // getBoundingClientRect is relative to viewport — workspace.scrollTop must be 0
+            const rect = twoCol.getBoundingClientRect();
+            const available = window.innerHeight - rect.top - 32; // 32px bottom breathing room
+            // Minimum 750px height ensures at least 4 complaint cards are visible at a time
+            twoCol.style.height = Math.max(750, available) + 'px';
+        }
+
+        window.addEventListener('resize', () => {
+            const nlpView = document.getElementById('view-nlp-search');
+            if (nlpView && nlpView.classList.contains('active')) {
+                requestAnimationFrame(resizeNlpPane);
+            }
+        });
 
         function updateSliders() {
             const startSlider = document.getElementById('start-year-slider');
@@ -1292,6 +1706,76 @@
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
+
+            // 14. RCA - NC Categorization
+            if (data.rca_global && data.rca_global.top_nc_types) {
+                const ncCtx = document.getElementById('chart-rca-nc').getContext('2d');
+                const ncKeys = Object.keys(data.rca_global.top_nc_types);
+                charts['chart-rca-nc'] = new Chart(ncCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ncKeys.map(k => k.length > 25 ? k.substring(0, 25) + '...' : k),
+                        datasets: [{
+                            label: 'NC Counts',
+                            data: ncKeys.map(k => data.rca_global.top_nc_types[k]),
+                            backgroundColor: '#003594',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+                });
+            }
+
+            // 15. RCA - Defect by Product (Stacked Bar)
+            if (data.rca_global && data.rca_global.defect_product) {
+                const dpCtx = document.getElementById('chart-rca-defect-product').getContext('2d');
+                const dpProducts = data.rca_global.defect_product.products;
+                const dpDefects = Object.keys(data.rca_global.defect_product.defects);
+                const colors = ['#003594', '#F7941D', '#10b981', '#3b82f6', '#8b5cf6'];
+                const dpDatasets = dpDefects.map((def, idx) => ({
+                    label: def,
+                    data: data.rca_global.defect_product.defects[def],
+                    backgroundColor: colors[idx % colors.length]
+                }));
+                charts['chart-rca-defect-product'] = new Chart(dpCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: dpProducts,
+                        datasets: dpDatasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { stacked: true }, y: { stacked: true } }
+                    }
+                });
+            }
+
+            // 16. RCA - Learnings List
+            const learningsList = document.getElementById('rca-learnings-list');
+            if (learningsList && data.rca_global && data.rca_global.learnings) {
+                learningsList.innerHTML = '';
+                if (data.rca_global.learnings.length === 0) {
+                    learningsList.innerHTML = '<div style="color:var(--text-muted); font-style:italic; padding:0.5rem 0;">No learning data recorded in selected dataset subset.</div>';
+                } else {
+                    data.rca_global.learnings.forEach(lrn => {
+                        const item = document.createElement('div');
+                        item.style.display = 'flex';
+                        item.style.gap = '0.5rem';
+                        item.style.alignItems = 'flex-start';
+                        item.style.background = 'rgba(0,53,148,0.02)';
+                        item.style.padding = '0.75rem';
+                        item.style.borderRadius = '0.5rem';
+                        item.style.borderLeft = '3px solid var(--bhel-blue)';
+                        
+                        item.innerHTML = `
+                            <svg width="16" height="16" fill="none" stroke="var(--bhel-blue)" stroke-width="2.5" viewBox="0 0 24 24" style="margin-top:2px; flex-shrink: 0;"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>${lrn}</span>
+                        `;
+                        learningsList.appendChild(item);
+                    });
+                }
+            }
         }
 
         // Export active Chart as Image
@@ -1328,61 +1812,240 @@
             document.body.removeChild(a);
         }
 
-        // Run Prediction API call
+        // 10x ML Engine State
+        let mlModelsMetadata = {};
+        let selectedMLTargets = new Set();
+        
+        async function loadMLMetadata() {
+            try {
+                const response = await fetch('/api/ml_metadata');
+                const data = await response.json();
+                if (data.status === 'success') {
+                    mlModelsMetadata = data.models;
+                    renderMLTargetsGrid();
+                }
+            } catch (e) {
+                console.error("Error loading ML metadata:", e);
+            }
+        }
+        
+        function renderMLTargetsGrid() {
+            const grid = document.getElementById('ml-targets-grid');
+            grid.innerHTML = '';
+            
+            const descriptions = {
+                'Resolution_Time': 'Predicts the number of days a complaint will take to reach final disposition.',
+                'Severity': 'Predicts the severity rating given by the unit.',
+                'Cost': 'Estimates the likely financial expenditure incurred to resolve the issue.',
+                'Repeat_Failure': 'Identifies if the complaint is highly likely to become a recurring issue.',
+                'Vendor_Risk': 'Calculates a risk score indicating the likelihood of delays and extra costs from the vendor.',
+                'Defect_Root_Cause': 'Uses NLP on text descriptions to predict the likely defect category.',
+                'Escalation': 'Predicts the probability that this complaint will be reopened.',
+                'Delay': 'Predicts whether the resolution time will exceed the 15-day SLA.',
+                'Warranty_Recovery': 'Predicts the probability of successfully recovering debit costs from the vendor.',
+                'Reliability': 'Scores the equipment/vendor on a 0-100 reliability index based on predicted risk metrics.'
+            };
+            
+            Object.keys(mlModelsMetadata).forEach(taskName => {
+                const card = document.createElement('div');
+                card.className = 'prediction-target-card';
+                card.style.cssText = `
+                    border: 1px solid var(--border-color);
+                    border-radius: 0.5rem;
+                    padding: 1rem;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    background: var(--card-bg);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                `;
+                
+                const readableName = taskName.replace(/_/g, ' ');
+                const desc = descriptions[taskName] || 'Machine learning model predicting historical metrics.';
+                
+                card.innerHTML = `
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <h4 style="margin:0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600;">${readableName}</h4>
+                            <input type="checkbox" id="ml-chk-${taskName}" style="pointer-events:none; margin-top:0.25rem;">
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">${desc}</p>
+                    </div>
+                `;
+                
+                card.onclick = () => {
+                    const chk = document.getElementById(`ml-chk-${taskName}`);
+                    if (selectedMLTargets.has(taskName)) {
+                        selectedMLTargets.delete(taskName);
+                        chk.checked = false;
+                        card.style.borderColor = 'var(--border-color)';
+                        card.style.background = 'var(--card-bg)';
+                    } else {
+                        selectedMLTargets.add(taskName);
+                        chk.checked = true;
+                        card.style.borderColor = 'var(--bhel-blue)';
+                        card.style.background = 'var(--primary-glow)';
+                    }
+                    updateDynamicFeatureForm();
+                };
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        function updateDynamicFeatureForm() {
+            const section = document.getElementById('ml-features-section');
+            const grid = document.getElementById('ml-dynamic-form-grid');
+            
+            if (selectedMLTargets.size === 0) {
+                section.style.display = 'none';
+                document.getElementById('prediction-result-panel').style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            grid.innerHTML = '';
+            
+            let requiredFeatures = new Set();
+            let requiresNlp = false;
+            
+            selectedMLTargets.forEach(task => {
+                const model = mlModelsMetadata[task];
+                if (model.is_nlp) {
+                    requiresNlp = true;
+                } else {
+                    model.features.forEach(f => requiredFeatures.add(f));
+                }
+            });
+            
+            if (requiresNlp) {
+                const fg = document.createElement('div');
+                fg.className = 'form-group span-2';
+                fg.innerHTML = `
+                    <label>Problem Description (Text)</label>
+                    <textarea id="pred-feat-Problem_Description" class="form-input" required style="min-height:80px; width: 100%;" placeholder="Describe the defect or problem..."></textarea>
+                `;
+                grid.appendChild(fg);
+            }
+            
+            requiredFeatures.forEach(feat => {
+                const fg = document.createElement('div');
+                fg.className = 'form-group';
+                const readableFeat = feat.replace(/_/g, ' ');
+                
+                let mappings = [];
+                for (let task of selectedMLTargets) {
+                    if (mlModelsMetadata[task] && mlModelsMetadata[task].label_mappings && mlModelsMetadata[task].label_mappings[feat]) {
+                        mappings = mlModelsMetadata[task].label_mappings[feat];
+                        break;
+                    }
+                }
+                
+                if (mappings.length > 0) {
+                    let opts = mappings.map(m => `<option value="${m}">${m}</option>`).join('');
+                    fg.innerHTML = `
+                        <label>${readableFeat}</label>
+                        <select id="pred-feat-${feat}" class="form-input" required>
+                            <option value="">Select...</option>
+                            ${opts}
+                        </select>
+                    `;
+                } else {
+                    fg.innerHTML = `
+                        <label>${readableFeat}</label>
+                        <input type="text" id="pred-feat-${feat}" class="form-input" required placeholder="Enter value...">
+                    `;
+                }
+                
+                grid.appendChild(fg);
+            });
+        }
+        
         async function runPrediction(e) {
             e.preventDefault();
             
+            if (selectedMLTargets.size === 0) return;
+            
             const submitBtn = document.getElementById('predict-submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<div class="spinner"></div> Evaluating...`;
+            submitBtn.innerHTML = `<div class="spinner"></div> Running Inference...`;
+            
+            const payloadFeatures = {};
+            const gridInputs = document.querySelectorAll('#ml-dynamic-form-grid .form-input');
+            gridInputs.forEach(input => {
+                const featName = input.id.replace('pred-feat-', '');
+                payloadFeatures[featName] = input.value;
+            });
             
             const payload = {
-                product: document.getElementById('pred-product').value,
-                region: document.getElementById('pred-region').value,
-                defect_type: document.getElementById('pred-defect').value,
-                severity_site: parseFloat(document.getElementById('pred-severity-site').value),
-                complaint_type: document.getElementById('pred-complaint-type').value,
-                shop_boi: document.getElementById('pred-shop-boi').value,
-                unit: document.getElementById('pred-unit').value,
-                cost_debitable: document.getElementById('pred-cost-debitable').value,
-                milestone_affected: document.getElementById('pred-milestone').value,
-                complaint_date: document.getElementById('pred-date').value,
-                debit_claimed: parseFloat(document.getElementById('pred-debit-claimed').value)
+                targets: Array.from(selectedMLTargets),
+                features: payloadFeatures
             };
             
             try {
-                const response = await fetch('/api/predict', {
+                const response = await fetch('/api/predict_multiple', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
                 const res = await response.json();
                 
-                document.getElementById('prediction-result-panel').style.display = 'grid';
-                
-                // Set Severity output
-                document.getElementById('pred-res-severity').innerText = res.predicted_severity;
-                const sevFill = document.getElementById('pred-res-severity-conf');
-                sevFill.style.width = `${res.predicted_severity_confidence}%`;
-                sevFill.innerText = `${res.predicted_severity_confidence}%`;
-                
-                // Set Days Output
-                document.getElementById('pred-res-days').innerText = `${res.predicted_disposition_days} Days`;
-                
-                // Set Repetitive Output
-                const isRep = res.predicted_repetitive === 'Y' ? 'Repetitive Risk (Y)' : 'Low Recurrence (N)';
-                document.getElementById('pred-res-repetitive').innerText = isRep;
-                const repFill = document.getElementById('pred-res-repetitive-conf');
-                repFill.style.width = `${res.predicted_repetitive_confidence}%`;
-                repFill.innerText = `${res.predicted_repetitive_confidence}%`;
-                
+                if (res.status === 'success') {
+                    renderMLResults(res.predictions);
+                } else {
+                    alert("Error: " + res.error);
+                }
             } catch (err) {
                 console.error("Prediction inference failed", err);
-                alert("Error during model inference: " + err.message);
+                alert("Error during model inference.");
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Evaluate SLA & Severity";
+                submitBtn.innerText = "Run Predictions";
             }
+        }
+        
+        function renderMLResults(predictions) {
+            const panel = document.getElementById('prediction-result-panel');
+            panel.style.display = 'flex';
+            panel.innerHTML = '';
+            
+            Object.keys(predictions).forEach(task => {
+                const result = predictions[task];
+                const readableName = task.replace(/_/g, ' ');
+                
+                const card = document.createElement('div');
+                card.className = 'prediction-outcome-card';
+                card.style.flex = '1 1 250px';
+                
+                let valColor = 'var(--text-main)';
+                let extraHtml = '';
+                
+                if (result.error) {
+                    valColor = 'var(--danger)';
+                    extraHtml = `<span style="color:var(--danger)">${result.error}</span>`;
+                } else {
+                    if (result.type === 'classification') {
+                        extraHtml = `
+                            <div style="margin-top:0.5rem;">
+                                <span style="font-size:0.8rem; color:var(--text-muted);">Confidence Score</span>
+                                <div class="confidence-bar-bg">
+                                    <div class="confidence-bar-fill" style="width:${result.confidence}%;">${result.confidence}%</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                const predVal = result.prediction || '-';
+                
+                card.innerHTML = `
+                    <span class="label" style="font-weight:600; color:var(--bhel-blue);">${readableName}</span>
+                    <span class="val" style="color: ${valColor}; font-size: 1.5rem; display:block; margin: 0.5rem 0;">${predVal}</span>
+                    ${extraHtml}
+                `;
+                panel.appendChild(card);
+            });
         }
 
         // Deployed Model Information & Plots
@@ -1504,6 +2167,235 @@
             }
             
             stepAnimation();
+        }
+
+        // Apply tag click suggestion
+        function applySuggestion(text) {
+            document.getElementById('nlp-search-query').value = text;
+            executeNlpSearch();
+        }
+
+        // Semantics NLP search execution
+        async function executeNlpSearch() {
+            const query = document.getElementById('nlp-search-query').value.trim();
+            const startYear = parseInt(document.getElementById('start-year-slider').value);
+            const endYear = parseInt(document.getElementById('end-year-slider').value);
+            const region = document.getElementById('global-region').value;
+            const unit = document.getElementById('global-unit').value;
+            
+            const resultsList = document.getElementById('nlp-results-list');
+            const resultsCount = document.getElementById('nlp-results-count');
+            const rcaSummary = document.getElementById('nlp-rca-summary');
+            
+            // Show loading
+            resultsList.innerHTML = `
+                <div style="display:flex; justify-content:center; align-items:center; padding:4rem; flex-direction:column; gap:1rem;">
+                    <div class="spinner"></div>
+                    <div style="color:var(--text-muted); font-size:0.9rem;">Searching & analyzing text semantics...</div>
+                </div>
+            `;
+            
+            const payload = {
+                query: query,
+                start_year: startYear,
+                end_year: endYear,
+                region: region,
+                unit: unit,
+                limit: 50
+            };
+            
+            try {
+                const response = await fetch('/api/nlp_search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    resultsList.innerHTML = `<div style="color:var(--danger); padding:2rem; text-align:center;">Error: ${data.error}</div>`;
+                    return;
+                }
+                
+                resultsCount.innerText = data.total_results.toLocaleString();
+                
+                // 1. Populate RCA Summary with progress bars
+                if (data.rca_summary) {
+                    const r = data.rca_summary;
+                    
+                    // Helper to build progress bars
+                    const buildProgressBarHtml = (obj, colorClass) => {
+                        const entries = Object.entries(obj);
+                        if (entries.length === 0) return '<div style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">None</div>';
+                        const maxVal = Math.max(...entries.map(e => e[1]));
+                        return `<div class="progress-list">` + entries.map(([key, val]) => {
+                            const pct = maxVal > 0 ? (val / maxVal * 100) : 0;
+                            return `
+                                <div class="progress-item">
+                                    <div class="progress-item-label">
+                                        <span style="color:var(--text-main);">${key}</span>
+                                        <span style="color:var(--text-muted);">${val}</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill ${colorClass}" style="width: ${pct}%"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') + `</div>`;
+                    };
+                    
+                    let defectsHtml = buildProgressBarHtml(r.top_defects, 'orange');
+                    let ncHtml = buildProgressBarHtml(r.top_nc, '');
+                    let vendorHtml = buildProgressBarHtml(r.top_vendors, 'green');
+                    
+                    rcaSummary.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:1.25rem;">
+                            <!-- Semantic KPIs -->
+                            <div class="kpi-mini-grid">
+                                <div class="kpi-mini-card">
+                                    <span class="kpi-mini-label">Avg Resolution</span>
+                                    <span class="kpi-mini-val">${r.avg_resolution_days} <span style="font-size:0.75rem; font-weight:600; color:var(--text-muted);">Days</span></span>
+                                </div>
+                                <div class="kpi-mini-card">
+                                    <span class="kpi-mini-label">Avg Severity</span>
+                                    <span class="kpi-mini-val">${r.avg_severity}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Top Defect Types -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">Top Defect Types</div>
+                                ${defectsHtml}
+                            </div>
+                            
+                            <!-- Top NC Categories -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">Top NC Categories</div>
+                                ${ncHtml}
+                            </div>
+
+                            <!-- Top Vendor Sources -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">Top Vendor Sources</div>
+                                ${vendorHtml}
+                            </div>
+
+                            <!-- Action Learnings -->
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="font-weight:700; color:var(--bhel-orange); font-size:0.75rem; text-transform:uppercase; border-bottom:1px solid var(--border-color); padding-bottom:0.25rem;">RCA Action Learnings</div>
+                                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                    ${r.learnings.map(l => `<div class="learning-note-card">${l}</div>`).join('') || '<div style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">No learning entries available.</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // 2. Populate Results list
+                resultsList.innerHTML = '';
+                if (data.results.length === 0) {
+                    resultsList.innerHTML = `
+                        <div class="empty-state" style="padding: 4rem 1rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px; height:48px; color:var(--text-muted); margin-bottom:1rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <h3 style="color:var(--text-muted);">No complaints matched your keywords.</h3>
+                            <p style="font-size:0.85rem; color:var(--text-muted);">Try broadening your query or removing active filters.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                data.results.forEach(res => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card-custom';
+                    
+                    // Assign border-left color depending on severity
+                    const unitSev = parseFloat(res['Severity Rating (Given by Unit)'] || res['Severity Rating (Given by Site)'] || 0.5);
+                    let borderLeftColor = 'var(--bhel-blue)';
+                    let severityLabel = 'Medium';
+                    let severityClass = 'orange';
+                    if (unitSev >= 0.7) {
+                        borderLeftColor = 'var(--danger)';
+                        severityLabel = 'High Severity';
+                        severityClass = 'orange';
+                    } else if (unitSev <= 0.35) {
+                        borderLeftColor = 'var(--success)';
+                        severityLabel = 'Low Severity';
+                        severityClass = 'green';
+                    } else {
+                        severityLabel = 'Medium Severity';
+                        severityClass = 'blue';
+                    }
+                    card.style.borderLeft = `5px solid ${borderLeftColor}`;
+                    
+                    // Highlight query tokens
+                    let desc = res['Problem Description'] || 'No description provided';
+                    let rec = res['Site Recommendation'] || 'No site recommendation provided';
+                    let learn = res['Learning Derived'] || 'No learning derived';
+                    
+                    if (query && data.query_tokens && data.query_tokens.length > 0) {
+                        data.query_tokens.forEach(tok => {
+                            if (tok && tok.length > 2) {
+                                const regex = new RegExp(`(${tok})`, 'gi');
+                                desc = desc.replace(regex, '<mark style="background:rgba(247,148,29,0.25); color:inherit; font-weight:600; padding:0 2px; border-radius:2px;">$1</mark>');
+                                rec = rec.replace(regex, '<mark style="background:rgba(247,148,29,0.25); color:inherit; font-weight:600; padding:0 2px; border-radius:2px;">$1</mark>');
+                                learn = learn.replace(regex, '<mark style="background:rgba(247,148,29,0.25); color:inherit; font-weight:600; padding:0 2px; border-radius:2px;">$1</mark>');
+                            }
+                        });
+                    }
+                    
+                    const scoreBadge = query ? `
+                        <span style="font-size:0.75rem; font-weight:700; color:var(--bhel-orange); background:rgba(247,148,29,0.08); padding:0.2rem 0.5rem; border-radius:0.25rem;">
+                            Match: ${(res.score || 0).toFixed(3)}
+                        </span>
+                    ` : '';
+                    
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; border-bottom:1px solid rgba(0,0,0,0.03); padding-bottom:0.5rem; margin-bottom:0.25rem;">
+                            <div>
+                                <strong style="color:var(--bhel-blue); font-size:0.95rem;">${res['Complaint Number'] || 'Unknown No.'} (Sno: ${res['Sno'] || 'N/A'})</strong>
+                                <span style="font-size:0.75rem; color:var(--text-muted); margin-left:0.5rem;">[${res['Complaint Date'] ? res['Complaint Date'].substring(0, 10) : 'N/A'}]</span>
+                            </div>
+                            <div style="display:flex; gap:0.4rem; align-items:center;">
+                                ${scoreBadge}
+                                <span class="result-pill ${res['Status'] === 'Closed' ? 'green' : 'blue'}">
+                                    ${res['Status'] || 'Unknown'}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size:0.88rem; color:var(--text-main); line-height:1.45;">
+                            <strong style="color:var(--bhel-blue); font-size:0.75rem; text-transform:uppercase; display:block; margin-bottom:0.25rem; letter-spacing:0.02rem;">Problem Description</strong>
+                            ${desc}
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-top:0.35rem;">
+                            <div style="background:rgba(0,53,148,0.01); border: 1px solid rgba(0,53,148,0.03); padding:0.65rem; border-radius:0.35rem; font-size:0.8rem; line-height:1.4;">
+                                <strong style="color:var(--text-muted); font-size:0.7rem; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Site Recommendation</strong>
+                                ${rec}
+                            </div>
+                            <div style="background:rgba(247,148,29,0.01); border: 1px solid rgba(247,148,29,0.03); padding:0.65rem; border-radius:0.35rem; font-size:0.8rem; line-height:1.4;">
+                                <strong style="color:var(--text-muted); font-size:0.7rem; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Learning Derived</strong>
+                                ${learn}
+                            </div>
+                        </div>
+
+                        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid rgba(0,0,0,0.03);">
+                            <span class="result-pill blue">Product: ${res['Product'] || 'N/A'}</span>
+                            <span class="result-pill">Project: ${res['Project'] || 'N/A'}</span>
+                            <span class="result-pill">Defect: ${res['Defect Type'] || 'N/A'}</span>
+                            <span class="result-pill">NC Cat: ${res['NC Categorization'] || 'N/A'}</span>
+                            <span class="result-pill">SLA: ${res['Days Taken for Disposition'] || 'N/A'} Days</span>
+                            <span class="result-pill ${severityClass}">${severityLabel} (${unitSev.toFixed(2)})</span>
+                        </div>
+                    `;
+                    resultsList.appendChild(card);
+                });
+                
+            } catch (err) {
+                console.error("NLP Search invocation failed", err);
+                resultsList.innerHTML = `<div style="color:var(--danger); padding:2rem; text-align:center;">Search failed: ${err.message}</div>`;
+            }
         }
     </script>
 </body>
