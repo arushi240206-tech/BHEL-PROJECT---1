@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BHEL Complaint Predictive Analytics Dashboard</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/static/favicon.png" type="image/png">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bhel-blue: #0ea5e9; /* more vibrant blue */
+            --bhel-orange: #f97316;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --danger: #ef4444;
+            --primary-glow: rgba(14, 165, 233, 0.5);
+            --glass-blur: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: radial-gradient(circle at top left, #1e1b4b, var(--bg-darker));
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .outfit-font { font-family: 'Outfit', sans-serif; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-darker); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Top Header */
+        header {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-logo { display: flex; align-items: center; gap: 1rem; }
+
+        .bhel-logo-mark {
+            background: linear-gradient(135deg, var(--bhel-blue), #3b82f6);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 800;
+            font-size: 1.3rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .header-title h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-top: 0.2rem; }
+
+        /* Layout Grid */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            flex: 1;
+            min-height: calc(100vh - 75px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(var(--glass-blur));
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.85rem 1rem; border-radius: 0.5rem;
+            color: var(--text-muted); text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .nav-item:hover::before { transform: translateX(100%); }
+        .nav-item:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--bhel-blue), #2563eb);
+            color: #ffffff; font-weight: 600;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-item svg { width: 18px; height: 18px; transition: transform 0.3s; }
+        .nav-item:hover svg { transform: scale(1.1); }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem; font-size: 0.8rem;
+            color: var(--text-muted); text-align: center;
+        }
+
+        /* Dashboard Workspace */
+        .workspace {
+            padding: 2rem; display: flex; flex-direction: column; gap: 2rem;
+            overflow-y: auto; max-width: 1400px; width: 100%; margin: 0 auto;
+        }
+
+        /* Global Filter Header */
+        .filter-banner {
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 1.25rem 1.5rem;
+            display: flex; flex-wrap: nowrap; gap: 1rem; align-items: flex-end; justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative; overflow-x: auto;
+        }
+
+        .filter-banner::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(14,165,233,0.1) 0%, transparent 60%);
+            z-index: 0; pointer-events: none;
+        }
+
+        .filter-banner > * { position: relative; z-index: 1; }
+
+        .filter-banner .title {
+            font-size: 1rem; font-weight: 700; color: #38bdf8;
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 0.5rem; /* alignment tweak */
+        }
+
+        .filter-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .filter-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .filter-select {
+            padding: 0.6rem 1rem; border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            font-family: inherit; font-size: 0.9rem;
+            color: var(--text-main); outline: none;
+            background: rgba(15, 23, 42, 0.8);
+            min-width: 160px;
+            transition: all 0.3s;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        .filter-select:focus { border-color: var(--bhel-blue); box-shadow: 0 0 0 2px var(--primary-glow); }
+        .filter-select option { background: #0f172a; color: #fff; }
+
+        /* Slider styles */
+        .slider-container { display: flex; align-items: center; gap: 1rem; min-width: 250px; }
+
+        .year-label {
+            font-size: 0.85rem; font-weight: 700; color: var(--text-main);
+            background: rgba(255,255,255,0.1); padding: 0.3rem 0.6rem;
+            border-radius: 0.3rem; min-width: 45px; text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .slider-control {
+            flex: 1; height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; outline: none; -webkit-appearance: none;
+        }
+
+        .slider-control::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 18px; height: 18px;
+            border-radius: 50%; background: var(--bhel-blue);
+            cursor: pointer; border: 2px solid #fff;
+            box-shadow: 0 0 10px var(--primary-glow);
+            transition: transform 0.2s;
+        }
+        .slider-control::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* Top Summary KPIs */
+        .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem; }
+
+        .kpi-card {
+            background: var(--card-bg); backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--bhel-blue);
+            border-radius: 1rem; padding: 1rem;
+            display: flex; flex-direction: column; gap: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative; overflow: hidden;
+        }
+
+        .kpi-card::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%; transform: translate(30%, -30%);
+        }
+
+        .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .kpi-card:nth-child(even) { border-top-color: var(--bhel-orange); }
+
+        .kpi-label { font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted); }
+        .kpi-value {
+            font-size: 1.25rem; font-weight: 800;
+            background: linear-gradient(to right, #fff, #93c5fd);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            word-wrap: break-word;
+        }
+        .kpi-card:nth-child(even) .kpi-value {
+            background: linear-gradient(to right, #fff, #fdba74);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Dashboard Views */
+        .dashboard-view { display: none; flex-direction: column; gap: 2rem; animation: fadeUpIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .dashboard-view.active { display: flex; }
+
+        @keyframes fadeUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Content Cards Grid */
+        .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .chart-grid.three-col { grid-template-columns: repeat(3, 1fr); }
+        .chart-grid.full-width { grid-template-columns: 1fr; }
+
+        .chart-card {
+            background: var(--card-bg); backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--border-color); border-radius: 1rem;
+            padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; gap: 1rem;
+            transition: border-color 0.3s;
+        }
+        .chart-card:hover { border-color: rgba(14, 165, 233, 0.3); }
+
+        .chart-card.span-2 { grid-column: span 2; }
+
+        .chart-card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;
+        }
+
+        .chart-title { font-size: 1.1rem; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 0.5rem;}
+        .chart-title::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--bhel-blue); box-shadow: 0 0 8px var(--bhel-blue); }
+
+        .chart-actions { display: flex; gap: 0.5rem; }
+
+        .chart-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.4rem 0.8rem; border-radius: 0.4rem;
+            font-size: 0.75rem; font-weight: 600; color: var(--text-main);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .chart-btn:hover { background: var(--bhel-blue); border-color: var(--bhel-blue); color: #fff; box-shadow: 0 0 10px var(--primary-glow); }
+
+        .chart-wrapper { position: relative; width: 100%; min-height: 320px; }
+
+        /* Tables */
+        .table-wrapper { overflow-x: auto; width: 100%; border-radius: 0.5rem; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.95rem; text-align: left; }
+        th {
+            background: rgba(15, 23, 42, 0.8); color: #38bdf8; font-weight: 700;
+            padding: 1rem; border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em;
+        }
+        td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-main); }
+        tr { transition: background 0.2s; }
+        tr:hover td { background: rgba(255,255,255,0.05); }
+
+        .green-highlight { background: rgba(16, 185, 129, 0.1) !important; border-left: 4px solid var(--success); }
+
+        /* Prediction Form */
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-group.full-width { grid-column: span 3; }
+
+        .form-group label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .form-input {
+            width: 100%; padding: 0.8rem 1rem; border-radius: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem;
+            outline: none; font-family: inherit; background: rgba(15, 23, 42, 0.6);
+            color: #fff; transition: all 0.3s;
+        }
+        .form-input:focus { border-color: var(--bhel-blue); box-shadow: 0 0 15px rgba(14, 165, 233, 0.3); background: rgba(15, 23, 42, 0.9); }
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        select.form-input option { background: #0f172a; color: #fff; }
+
+        .btn {
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            color: #ffffff; border: none; border-radius: 0.5rem;
+            padding: 0.85rem 2rem; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
+            width: fit-content; text-transform: uppercase; letter-spacing: 0.05em;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+            position: relative; overflow: hidden;
+        }
+        .btn::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg) translateX(-100%); transition: transform 0.6s;
+        }
+        .btn:hover::after { transform: rotate(45deg) translateX(100%); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.6); }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+        }
+        .btn-orange:hover { box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6); }
+
+        /* Prediction Result Panel */
+        .prediction-result-panel {
+            margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 2rem; display: none; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .prediction-outcome-card {
+            background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
+            position: relative; overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.05);
+        }
+        .prediction-outcome-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--bhel-blue);
+        }
+
+        .prediction-outcome-card.repetitive {
+            border-color: rgba(249, 115, 22, 0.3);
+            box-shadow: inset 0 0 20px rgba(249, 115, 22, 0.05);
+        }
+        .prediction-outcome-card.repetitive::before { background: var(--bhel-orange); }
+
+        .prediction-outcome-card .label { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .prediction-outcome-card .val { font-size: 2.2rem; font-weight: 800; color: #fff; }
+        .prediction-outcome-card.repetitive .val { color: #fdba74; }
+
+        .confidence-bar-bg {
+            background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px;
+            width: 100%; overflow: hidden; margin-top: 0.25rem;
+        }
+        .confidence-bar-fill {
+            background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+            height: 100%; border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.8);
+        }
+        .prediction-outcome-card.repetitive .confidence-bar-fill {
+            background: linear-gradient(90deg, #f97316, #fb923c);
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
+        }
+
+        /* Spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #fff; border-radius: 50%;
+            width: 1.5rem; height: 1.5rem; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Empty State */
+        .empty-filter-state {
+            display: flex; align-items: center; justify-content: center;
+            padding: 4rem; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(var(--glass-blur));
+            border-radius: 1rem; border: 1px dashed rgba(255,255,255,0.2);
+            text-align: center; font-weight: 500; color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+    </style>
+
+    <script>
+        // Chart.js Dark Mode Defaults
+        if (typeof Chart !== 'undefined') {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+            Chart.defaults.font.family = "'Inter', sans-serif";
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- Top Header -->
+    <header>
+        <div class="header-logo">
+            <img src="/static/logo.png" alt="BHEL Logo" style="height: 52px; border-radius: 0.25rem;">
+            <div class="header-title">
+                <h1>Predictive Complaint Analytics Dashboard</h1>
+                <p>10-Year ML Lifecycle & SLA Prediction Engine</p>
+            </div>
+        </div>
+        <div>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--bhel-blue); background: rgba(0,53,148,0.05); padding: 0.4rem 0.8rem; border-radius: 0.25rem;">
+                Status: Models Deployed ✓
+            </span>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <ul class="nav-links">
+                <li><div class="nav-item active" onclick="switchView('overview', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+                    Overview
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('trends', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    Complaint Volumes
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('defects', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Defect Analysis
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('resolution', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    SLA & Resolution
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('costs', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Cost Analysis
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('predictions', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    ML Predictions
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('model-report', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Model Report
+                </div></li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>BHEL Trichy QA Division</p>
+                <p style="margin-top:0.25rem; font-weight:700; color:var(--bhel-blue);">v2.0.4</p>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Global Filter Banner -->
+            <section class="filter-banner">
+                <div class="title">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    <span>Global Controls:</span>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Year Range (2014 - 2026)</label>
+                    <div class="slider-container">
+                        <span id="start-year-lbl" class="year-label">2016</span>
+                        <input type="range" id="start-year-slider" class="slider-control" min="2014" max="2026" value="2016" oninput="updateSliders()">
+                        <input type="range" id="end-year-slider" class="slider-control" min="2014" max="2026" value="2026" oninput="updateSliders()">
+                        <span id="end-year-lbl" class="year-label">2026</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="global-region">Region</label>
+                    <select id="global-region" class="filter-select" onchange="triggerUpdate()">
+                        <option value="">All Regions</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="global-unit">Unit</label>
+                    <select id="global-unit" class="filter-select" onchange="triggerUpdate()">
+                        <option value="">All Units</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Top Summary Cards -->
+            <section class="kpi-row">
+                <div class="kpi-card">
+                    <span class="kpi-label">Total Complaints</span>
+                    <span class="kpi-value" id="kpi-total">-</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Avg Resolution Days</span>
+                    <span class="kpi-value" id="kpi-resolution">-</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Repetitive Rate</span>
+                    <span class="kpi-value" id="kpi-repetitive">-</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Average Severity</span>
+                    <span class="kpi-value" id="kpi-severity">-</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Total Claimed Debits</span>
+                    <span class="kpi-value" id="kpi-debits">-</span>
+                </div>
+            </section>
+
+            <!-- ================= VIEW: OVERVIEW ================= -->
+            <div id="view-overview" class="dashboard-view active">
+                <div class="chart-grid">
+                    <div class="chart-card span-2">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Complaint Registration Trend (YoY Overlay)</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-vol')">Export PNG</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-vol"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Defect Type Frequency (Top 10)</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-defect-type-overview')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-defect-type-overview"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Average Resolution SLA per Year</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-sla-overview')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-sla-overview"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: VOLUMES ================= -->
+            <div id="view-trends" class="dashboard-view">
+                <div class="chart-grid full-width">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Complaint Volume (3-Month Rolling Average)</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-rolling')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-rolling"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-card span-2">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Complaint Status Distribution by Year</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-status-dist')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-status-dist"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: DEFECTS ================= -->
+            <div id="view-defects" class="dashboard-view">
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Top 10 Defect Sub-type Descriptions</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-defect-subtypes')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-defect-subtypes"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Defect Distribution by Region</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-defect-region')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-defect-region"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: RESOLUTION ================= -->
+            <div id="view-resolution" class="dashboard-view">
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Resolution Time Distribution Bins</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-res-bins')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-res-bins"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">SLA Resolution Timeframes (30 / 60 / 90 days)</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-sla-ratios')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper" style="min-height: 300px;">
+                            <canvas id="chart-sla-ratios"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card span-2">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Top 10 BHEL Units with Longest Avg Resolution Time (Days)</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-longest-units')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-longest-units"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: COSTS ================= -->
+            <div id="view-costs" class="dashboard-view">
+                <div class="chart-grid">
+                    <div class="chart-card span-2">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Average Debit Claimed vs Accepted by Unit (INR)</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-cost-claimed-accepted')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-cost-claimed-accepted"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Average Cost Overrun trend per Year</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-overrun')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-overrun"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Top 10 Vendors by Total Cost Debitable</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="exportChart('chart-vendor-costs')">Export</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-vendor-costs"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: PREDICTIONS ================= -->
+            <div id="view-predictions" class="dashboard-view">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3 class="chart-title">Run Predictive ML Inference</h3>
+                    </div>
+                    <form id="prediction-form" onsubmit="runPrediction(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="pred-product">Product</label>
+                                <select id="pred-product" class="form-input" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-region">Region</label>
+                                <select id="pred-region" class="form-input" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-defect">Defect Type</label>
+                                <select id="pred-defect" class="form-input" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-severity-site">Site Severity Rating (0.1 - 1.0)</label>
+                                <input type="number" id="pred-severity-site" class="form-input" min="0.1" max="1.0" step="0.1" value="0.5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-complaint-type">Complaint Type</label>
+                                <select id="pred-complaint-type" class="form-input" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-shop-boi">Shop / BOI</label>
+                                <select id="pred-shop-boi" class="form-input" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-unit">Unit</label>
+                                <select id="pred-unit" class="form-input" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-cost-debitable">Cost Debitable</label>
+                                <select id="pred-cost-debitable" class="form-input" required>
+                                    <option value="Y">Yes</option>
+                                    <option value="N">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-milestone">Milestone Affected (Site)</label>
+                                <select id="pred-milestone" class="form-input" required>
+                                    <option value="Y">Yes</option>
+                                    <option value="N">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-date">Complaint Registration Date</label>
+                                <input type="date" id="pred-date" class="form-input" value="2026-06-04" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pred-debit-claimed">Debit Claimed (INR)</label>
+                                <input type="number" id="pred-debit-claimed" class="form-input" value="0" required>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem;">
+                            <button type="submit" class="btn btn-orange" id="predict-submit-btn">
+                                <span>Evaluate SLA & Severity</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Predictions Output -->
+                    <div class="prediction-result-panel" id="prediction-result-panel">
+                        <div class="prediction-outcome-card">
+                            <span class="label">Predicted Unit Severity</span>
+                            <span class="val" id="pred-res-severity">-</span>
+                            <div>
+                                <span style="font-size:0.8rem; color:var(--text-muted);">Confidence Score</span>
+                                <div class="confidence-bar-bg">
+                                    <div class="confidence-bar-fill" id="pred-res-severity-conf"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="prediction-outcome-card">
+                            <span class="label">Predicted Resolution SLA (Days)</span>
+                            <span class="val" id="pred-res-days" style="color: var(--success);">-</span>
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem;">Fitted model forecasts days required to reach 'Disposed' status.</p>
+                        </div>
+                        <div class="prediction-outcome-card repetitive">
+                            <span class="label">Repetitive Root Cause Risk</span>
+                            <span class="val" id="pred-res-repetitive">-</span>
+                            <div>
+                                <span style="font-size:0.8rem; color:var(--text-muted);">Recurrence Probability</span>
+                                <div class="confidence-bar-bg">
+                                    <div class="confidence-bar-fill" id="pred-res-repetitive-conf"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: MODEL REPORT ================= -->
+            <div id="view-model-report" class="dashboard-view">
+                <!-- Training Walkthrough status banner -->
+                <div class="walkthrough-status" id="walkthrough-status-banner">
+                    <span id="walkthrough-banner-text">Models Loaded. Click to replay training walkthrough.</span>
+                    <button class="btn btn-orange" style="padding: 0.5rem 1rem; font-size:0.8rem;" onclick="runWalkthroughAnimation()">Replay Walkthrough</button>
+                </div>
+                
+                <div class="chart-grid full-width">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Model Comparison & Leaderboard</h3>
+                            <button class="chart-btn" onclick="exportLeaderboardCSV()">Export Leaderboard CSV</button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Target</th>
+                                        <th>Algorithm</th>
+                                        <th>Metric A</th>
+                                        <th>Metric B</th>
+                                        <th>Metric C</th>
+                                        <th>Metric D</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboard-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="chart-card" id="selection-card-severity">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Target A: Deployed Severity Model</h3>
+                        </div>
+                        <div style="font-size:0.9rem; display:flex; flex-direction:column; gap:0.5rem;">
+                            <div><strong>Algorithm:</strong> <span id="deployed-severity-name">-</span></div>
+                            <div><strong>Key Metrics:</strong> <span id="deployed-severity-metrics">-</span></div>
+                            <div style="margin-top:0.5rem;"><strong style="color:var(--bhel-blue);">Feature Importance (Top 15):</strong></div>
+                        </div>
+                        <div class="chart-wrapper" style="min-height: 250px;">
+                            <canvas id="chart-imp-severity"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card" id="selection-card-disposition">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Target B: Deployed SLA Regression Model</h3>
+                        </div>
+                        <div style="font-size:0.9rem; display:flex; flex-direction:column; gap:0.5rem;">
+                            <div><strong>Algorithm:</strong> <span id="deployed-disposition-name">-</span></div>
+                            <div><strong>Key Metrics:</strong> <span id="deployed-disposition-metrics">-</span></div>
+                            <div style="margin-top:0.5rem;"><strong style="color:var(--bhel-blue);">Actual vs Predicted SLA:</strong></div>
+                        </div>
+                        <div class="chart-wrapper" style="min-height: 250px;">
+                            <canvas id="chart-scatter-disposition"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card" id="selection-card-repetitive" style="grid-column: span 2;">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Target C: Deployed Repetitive Risk Model</h3>
+                        </div>
+                        <div style="font-size:0.9rem; display:flex; flex-direction:column; gap:0.5rem;">
+                            <div><strong>Algorithm:</strong> <span id="deployed-repetitive-name">-</span></div>
+                            <div><strong>Key Metrics:</strong> <span id="deployed-repetitive-metrics">-</span></div>
+                            <div style="margin-top:0.5rem;"><strong style="color:var(--bhel-blue);">Feature Importance (Top 15):</strong></div>
+                        </div>
+                        <div class="chart-wrapper" style="min-height: 250px;">
+                            <canvas id="chart-imp-repetitive"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Global charts references
+        const charts = {};
+        let metadata = {};
+        let mlMetrics = {};
+        let trainingLogs = [];
+        let walkthroughTimeout = null;
+
+        // On Load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMetadata();
+            loadMLMetrics();
+            triggerUpdate();
+        });
+
+        // Load Filter Metadata
+        async function loadMetadata() {
+            try {
+                const response = await fetch('/api/metadata');
+                metadata = await response.json();
+                
+                // Populate filters
+                populateDropdown(document.getElementById('global-region'), metadata.regions);
+                populateDropdown(document.getElementById('global-unit'), metadata.units);
+                
+                // Populate prediction inputs
+                populateDropdown(document.getElementById('pred-product'), metadata.products);
+                populateDropdown(document.getElementById('pred-region'), metadata.regions);
+                populateDropdown(document.getElementById('pred-defect'), metadata.defects || ['DESIGN ERROR', 'MANUFACTURING DEFECT', 'MATERIAL', 'ERECTION DEVIATION', 'COMMISSIONING ISSUE']);
+                populateDropdown(document.getElementById('pred-complaint-type'), ['SAR', 'CAR']);
+                populateDropdown(document.getElementById('pred-shop-boi'), ['SHOP', 'BOI']);
+                populateDropdown(document.getElementById('pred-unit'), metadata.units);
+            } catch (e) {
+                console.error("Error loading filter metadata:", e);
+            }
+        }
+
+        function populateDropdown(selectElement, list) {
+            if (!selectElement) return;
+            selectElement.innerHTML = selectElement.tagName === 'SELECT' && selectElement.id.startsWith('global') ? selectElement.innerHTML : '';
+            list.forEach(val => {
+                if (val && val !== 'Unknown' && val !== 'UNKNOWN') {
+                    const opt = document.createElement('option');
+                    opt.value = val;
+                    opt.textContent = val;
+                    selectElement.appendChild(opt);
+                }
+            });
+        }
+
+        // Load ML Metrics
+        async function loadMLMetrics() {
+            try {
+                const response = await fetch('/api/metrics');
+                if (response.status === 200) {
+                    mlMetrics = await response.json();
+                    document.getElementById('walkthrough-status-banner').style.display = 'flex';
+                    renderDeployedModelInfo();
+                }
+            } catch (e) {
+                console.error("Error loading ML metrics:", e);
+            }
+        }
+
+        // Switch active View
+        function switchView(viewId, element) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.querySelectorAll('.dashboard-view').forEach(view => view.classList.remove('active'));
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            
+            // If walkthrough view and metrics loaded, run walkthrough animation
+            if (viewId === 'model-report' && mlMetrics && trainingLogs.length === 0) {
+                runWalkthroughAnimation();
+            }
+        }
+
+        function updateSliders() {
+            const startSlider = document.getElementById('start-year-slider');
+            const endSlider = document.getElementById('end-year-slider');
+            
+            let start = parseInt(startSlider.value);
+            let end = parseInt(endSlider.value);
+            
+            if (start > end) {
+                // cross over prevention
+                startSlider.value = end;
+                start = end;
+            }
+            
+            document.getElementById('start-year-lbl').innerText = start;
+            document.getElementById('end-year-lbl').innerText = end;
+            
+            // Trigger dynamic update on trends
+            triggerUpdate();
+        }
+
+        // Trigger dynamic API update for trends
+        async function triggerUpdate() {
+            const startYear = parseInt(document.getElementById('start-year-slider').value);
+            const endYear = parseInt(document.getElementById('end-year-slider').value);
+            const region = document.getElementById('global-region').value;
+            const unit = document.getElementById('global-unit').value;
+            
+            const payload = {
+                start_year: startYear,
+                end_year: endYear,
+                region: region,
+                unit: unit
+            };
+            
+            try {
+                const response = await fetch('/api/trends', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                // Update KPIs
+                document.getElementById('kpi-total').innerText = data.kpis.total_complaints.toLocaleString();
+                document.getElementById('kpi-resolution').innerText = `${data.kpis.avg_resolution_days} Days`;
+                document.getElementById('kpi-repetitive').innerText = `${data.kpis.pct_repetitive}%`;
+                document.getElementById('kpi-severity').innerText = data.kpis.avg_severity;
+                document.getElementById('kpi-debits').innerText = `₹ ${data.kpis.total_cost_debitable.toLocaleString()}`;
+                
+                // Update Charts
+                renderAllCharts(data);
+            } catch (e) {
+                console.error("Trends retrieval failed:", e);
+            }
+        }
+
+        // Render Charts using dynamic data
+        function renderAllCharts(data) {
+            // Destroy all existing charts to avoid overlap glitches
+            Object.keys(charts).forEach(key => {
+                if (charts[key]) charts[key].destroy();
+            });
+            
+            if (data.empty) return;
+            
+            // 1. Complaint Volume Trend (YoY Line chart)
+            const volCtx = document.getElementById('chart-vol').getContext('2d');
+            const volDatasets = Object.keys(data.complaint_volume.yoy_volume).map((yr, idx) => {
+                const colors = ['#003594', '#F7941D', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#06b6d4', '#14b8a6', '#84cc16'];
+                return {
+                    label: yr,
+                    data: data.complaint_volume.yoy_volume[yr],
+                    borderColor: colors[idx % colors.length],
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.25
+                };
+            });
+            charts['chart-vol'] = new Chart(volCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: volDatasets
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 2. Defect Type Overview (Bar)
+            const defCtx = document.getElementById('chart-defect-type-overview').getContext('2d');
+            const defKeys = Object.keys(data.defect_analysis.top_defect_types);
+            charts['chart-defect-type-overview'] = new Chart(defCtx, {
+                type: 'bar',
+                data: {
+                    labels: defKeys,
+                    datasets: [{
+                        label: 'Defect Counts',
+                        data: defKeys.map(k => data.defect_analysis.top_defect_types[k]),
+                        backgroundColor: '#003594',
+                        borderColor: '#002366',
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+            });
+            
+            // 3. Average SLA Overview (Line)
+            const slaCtx = document.getElementById('chart-sla-overview').getContext('2d');
+            const slaYears = Object.keys(data.resolution_performance.avg_days_year);
+            charts['chart-sla-overview'] = new Chart(slaCtx, {
+                type: 'line',
+                data: {
+                    labels: slaYears,
+                    datasets: [{
+                        label: 'Avg Resolution Lag (Days)',
+                        data: slaYears.map(y => data.resolution_performance.avg_days_year[y]),
+                        borderColor: '#F7941D',
+                        backgroundColor: 'rgba(247,148,29,0.05)',
+                        fill: true,
+                        tension: 0.1,
+                        borderWidth: 3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 4. Rolling 3-month volume (Line)
+            const rollCtx = document.getElementById('chart-rolling').getContext('2d');
+            charts['chart-rolling'] = new Chart(rollCtx, {
+                type: 'line',
+                data: {
+                    labels: data.complaint_volume.rolling_labels,
+                    datasets: [{
+                        label: '3-Month Rolling Average Count',
+                        data: data.complaint_volume.rolling_3,
+                        borderColor: '#003594',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 5. Complaint Status Area
+            const statusCtx = document.getElementById('chart-status-dist').getContext('2d');
+            const statusLabels = data.milestone_status.status_data.years;
+            const statusKeys = data.milestone_status.status_data.statuses;
+            const statusDatasets = statusKeys.map((k, idx) => {
+                const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b'];
+                return {
+                    label: k,
+                    data: data.milestone_status.status_data.series[k],
+                    backgroundColor: colors[idx % colors.length] + 'aa',
+                    borderColor: colors[idx % colors.length],
+                    fill: true
+                };
+            });
+            charts['chart-status-dist'] = new Chart(statusCtx, {
+                type: 'line',
+                data: { labels: statusLabels, datasets: statusDatasets },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { stacked: true } } }
+            });
+            
+            // 6. Top 10 Sub-types (Bar)
+            const subCtx = document.getElementById('chart-defect-subtypes').getContext('2d');
+            const subKeys = Object.keys(data.defect_analysis.top_defect_subtypes);
+            charts['chart-defect-subtypes'] = new Chart(subCtx, {
+                type: 'bar',
+                data: {
+                    labels: subKeys.map(k => k.length > 25 ? k.substring(0, 25) + '...' : k),
+                    datasets: [{
+                        label: 'Count',
+                        data: subKeys.map(k => data.defect_analysis.top_defect_subtypes[k]),
+                        backgroundColor: '#F7941D'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 7. Defect by Region (Grouped Bar)
+            const defRegCtx = document.getElementById('chart-defect-region').getContext('2d');
+            const regLabels = data.defect_analysis.defect_region.regions;
+            const regDefects = Object.keys(data.defect_analysis.defect_region.defects);
+            const regDatasets = regDefects.map((def, idx) => {
+                const colors = ['#003594', '#F7941D', '#10b981', '#3b82f6', '#8b5cf6'];
+                return {
+                    label: def,
+                    data: data.defect_analysis.defect_region.defects[def],
+                    backgroundColor: colors[idx % colors.length]
+                };
+            });
+            charts['chart-defect-region'] = new Chart(defRegCtx, {
+                type: 'bar',
+                data: { labels: regLabels, datasets: regDatasets },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 8. Resolution bins
+            const resBinsCtx = document.getElementById('chart-res-bins').getContext('2d');
+            const binKeys = Object.keys(data.resolution_performance.resolution_bins);
+            charts['chart-res-bins'] = new Chart(resBinsCtx, {
+                type: 'bar',
+                data: {
+                    labels: binKeys,
+                    datasets: [{
+                        label: 'Complaints count',
+                        data: binKeys.map(k => data.resolution_performance.resolution_bins[k]),
+                        backgroundColor: '#003594'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 9. SLA ratios frame (Doughnut)
+            const ratioCtx = document.getElementById('chart-sla-ratios').getContext('2d');
+            charts['chart-sla-ratios'] = new Chart(ratioCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Within 30 Days', 'Within 60 Days', 'Within 90 Days'],
+                    datasets: [{
+                        label: 'Percentage (%) of resolved complaints',
+                        data: [
+                            data.resolution_performance.resolved_ratios.within_30,
+                            data.resolution_performance.resolved_ratios.within_60,
+                            data.resolution_performance.resolved_ratios.within_90
+                        ],
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+            });
+            
+            // 10. Longest Units
+            const longUnitCtx = document.getElementById('chart-longest-units').getContext('2d');
+            const luKeys = Object.keys(data.resolution_performance.longest_resolution_units);
+            charts['chart-longest-units'] = new Chart(longUnitCtx, {
+                type: 'bar',
+                data: {
+                    labels: luKeys,
+                    datasets: [{
+                        label: 'Average Resolution Time (Days)',
+                        data: luKeys.map(k => data.resolution_performance.longest_resolution_units[k]),
+                        backgroundColor: '#ef4444'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 11. Cost claimed vs accepted
+            const costCtx = document.getElementById('chart-cost-claimed-accepted').getContext('2d');
+            const costYears = Object.keys(data.cost_analysis.avg_claimed_year);
+            charts['chart-cost-claimed-accepted'] = new Chart(costCtx, {
+                type: 'line',
+                data: {
+                    labels: costYears,
+                    datasets: [
+                        {
+                            label: 'Avg Claimed (INR)',
+                            data: costYears.map(y => data.cost_analysis.avg_claimed_year[y]),
+                            borderColor: '#003594',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Avg Accepted (INR)',
+                            data: costYears.map(y => data.cost_analysis.avg_accepted_year[y]),
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 12. Cost overrun trend
+            const overCtx = document.getElementById('chart-overrun').getContext('2d');
+            const overYears = Object.keys(data.cost_analysis.avg_overrun_year);
+            charts['chart-overrun'] = new Chart(overCtx, {
+                type: 'bar',
+                data: {
+                    labels: overYears,
+                    datasets: [{
+                        label: 'Avg Overrun Cost (INR)',
+                        data: overYears.map(y => data.cost_analysis.avg_overrun_year[y]),
+                        backgroundColor: '#F7941D'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            
+            // 13. Vendor costs
+            const vendCtx = document.getElementById('chart-vendor-costs').getContext('2d');
+            const vendKeys = Object.keys(data.cost_analysis.top_vendors_cost);
+            charts['chart-vendor-costs'] = new Chart(vendCtx, {
+                type: 'bar',
+                data: {
+                    labels: vendKeys,
+                    datasets: [{
+                        label: 'Total Cost (INR)',
+                        data: vendKeys.map(k => data.cost_analysis.top_vendors_cost[k]),
+                        backgroundColor: '#003594'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // Export active Chart as Image
+        function exportChart(chartId) {
+            const chart = charts[chartId];
+            if (chart) {
+                const url = chart.toBase64Image();
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${chartId}_export.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
+        // Export Leaderboard Table as CSV
+        function exportLeaderboardCSV() {
+            let csv = "Target,Algorithm,Metric A (Accuracy/MAE),Metric B (Precision/RMSE),Metric C (Recall/R2),Metric D (F1-score),Status\n";
+            const rows = document.querySelectorAll("#leaderboard-tbody tr");
+            rows.forEach(row => {
+                const cols = row.querySelectorAll("td");
+                const rowData = Array.from(cols).map(c => `"${c.innerText}"`).join(",");
+                csv += rowData + "\n";
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "BHEL_ML_Leaderboard_Report.csv";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Run Prediction API call
+        async function runPrediction(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('predict-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<div class="spinner"></div> Evaluating...`;
+            
+            const payload = {
+                product: document.getElementById('pred-product').value,
+                region: document.getElementById('pred-region').value,
+                defect_type: document.getElementById('pred-defect').value,
+                severity_site: parseFloat(document.getElementById('pred-severity-site').value),
+                complaint_type: document.getElementById('pred-complaint-type').value,
+                shop_boi: document.getElementById('pred-shop-boi').value,
+                unit: document.getElementById('pred-unit').value,
+                cost_debitable: document.getElementById('pred-cost-debitable').value,
+                milestone_affected: document.getElementById('pred-milestone').value,
+                complaint_date: document.getElementById('pred-date').value,
+                debit_claimed: parseFloat(document.getElementById('pred-debit-claimed').value)
+            };
+            
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const res = await response.json();
+                
+                document.getElementById('prediction-result-panel').style.display = 'grid';
+                
+                // Set Severity output
+                document.getElementById('pred-res-severity').innerText = res.predicted_severity;
+                const sevFill = document.getElementById('pred-res-severity-conf');
+                sevFill.style.width = `${res.predicted_severity_confidence}%`;
+                sevFill.innerText = `${res.predicted_severity_confidence}%`;
+                
+                // Set Days Output
+                document.getElementById('pred-res-days').innerText = `${res.predicted_disposition_days} Days`;
+                
+                // Set Repetitive Output
+                const isRep = res.predicted_repetitive === 'Y' ? 'Repetitive Risk (Y)' : 'Low Recurrence (N)';
+                document.getElementById('pred-res-repetitive').innerText = isRep;
+                const repFill = document.getElementById('pred-res-repetitive-conf');
+                repFill.style.width = `${res.predicted_repetitive_confidence}%`;
+                repFill.innerText = `${res.predicted_repetitive_confidence}%`;
+                
+            } catch (err) {
+                console.error("Prediction inference failed", err);
+                alert("Error during model inference: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Evaluate SLA & Severity";
+            }
+        }
+
+        // Deployed Model Information & Plots
+        function renderDeployedModelInfo() {
+            // Target A
+            document.getElementById('deployed-severity-name').innerText = mlMetrics.targets.severity.best_model;
+            const bestSevObj = mlMetrics.targets.severity.results.find(r => r.model_name === mlMetrics.targets.severity.best_model);
+            document.getElementById('deployed-severity-metrics').innerText = `Accuracy: ${bestSevObj.accuracy.toFixed(4)} | F1-Score: ${bestSevObj.f1_score.toFixed(4)}`;
+            renderImportancePlot('chart-imp-severity', bestSevObj.feature_importances, '#003594');
+            
+            // Target B
+            document.getElementById('deployed-disposition-name').innerText = mlMetrics.targets.disposition.best_model;
+            const bestDispObj = mlMetrics.targets.disposition.results.find(r => r.model_name === mlMetrics.targets.disposition.best_model);
+            document.getElementById('deployed-disposition-metrics').innerText = `RMSE: ${bestDispObj.rmse.toFixed(1)} Days | MAE: ${bestDispObj.mae.toFixed(1)} Days | R²: ${bestDispObj.r2_score.toFixed(2)}`;
+            renderScatterPlot('chart-scatter-disposition', bestDispObj.scatter_plot_sample);
+            
+            // Target C
+            document.getElementById('deployed-repetitive-name').innerText = mlMetrics.targets.repetitive.best_model;
+            const bestRepObj = mlMetrics.targets.repetitive.results.find(r => r.model_name === mlMetrics.targets.repetitive.best_model);
+            document.getElementById('deployed-repetitive-metrics').innerText = `Accuracy: ${bestRepObj.accuracy.toFixed(4)} | F1-Score: ${bestRepObj.f1_score.toFixed(4)}`;
+            renderImportancePlot('chart-imp-repetitive', bestRepObj.feature_importances, '#F7941D');
+        }
+
+        function renderImportancePlot(canvasId, importances, color) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const labels = importances.map(i => i.feature);
+            const vals = importances.map(i => i.importance);
+            charts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Feature Importance Score',
+                        data: vals,
+                        backgroundColor: color
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+            });
+        }
+
+        function renderScatterPlot(canvasId, scatterData) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const dataPoints = scatterData.map(d => ({ x: d.actual, y: d.predicted }));
+            charts[canvasId] = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Actual vs Predicted SLA Days',
+                        data: dataPoints,
+                        backgroundColor: 'rgba(0, 53, 148, 0.4)',
+                        borderColor: '#003594',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Actual Days' } },
+                        y: { title: { display: true, text: 'Predicted Days' } }
+                    }
+                }
+            });
+        }
+
+        // Training Walkthrough effect
+        function runWalkthroughAnimation() {
+            const banner = document.getElementById('walkthrough-status-banner');
+            const bannerText = document.getElementById('walkthrough-banner-text');
+            const tbody = document.getElementById('leaderboard-tbody');
+            
+            banner.style.display = 'flex';
+            tbody.innerHTML = '';
+            
+            if (walkthroughTimeout) clearTimeout(walkthroughTimeout);
+            
+            // Build logging steps
+            trainingLogs = [];
+            
+            // Group models by target
+            const addTargetLogs = (targetKey, targetName, metricKeys) => {
+                const targetObj = mlMetrics.targets[targetKey];
+                targetObj.results.forEach(m => {
+                    const isBest = m.model_name === targetObj.best_model;
+                    const rowHtml = `
+                        <tr class="${isBest ? 'green-highlight' : ''}">
+                            <td style="font-weight:600;">${targetName}</td>
+                            <td>${m.model_name}</td>
+                            <td>${metricKeys[0]}: ${(m[metricKeys[0]] || m.classification_report.macro_avg['precision'] || 0).toFixed(4)}</td>
+                            <td>${metricKeys[1]}: ${(m[metricKeys[1]] || m.classification_report.macro_avg['recall'] || 0).toFixed(4)}</td>
+                            <td>${metricKeys[2]}: ${(m[metricKeys[2]] || m.classification_report.macro_avg['f1-score'] || 0).toFixed(4)}</td>
+                            <td>${metricKeys[3]}: ${(m[metricKeys[3]] || 0).toFixed(4)}</td>
+                            <td><span style="color: ${isBest ? 'var(--success)' : 'var(--text-muted)'}; font-weight:${isBest?700:500};">${isBest ? 'DEPLOYED ✓' : 'Evaluated'}</span></td>
+                        </tr>
+                    `;
+                    trainingLogs.push({
+                        text: `Evaluating Target [${targetName}] using [${m.model_name}] algorithm...`,
+                        rowHtml: rowHtml
+                    });
+                });
+            };
+            
+            addTargetLogs('severity', 'Severity Rating', ['accuracy', 'precision', 'recall', 'f1_score']);
+            addTargetLogs('disposition', 'Disposition SLA', ['mae', 'rmse', 'r2_score', 'mae']);
+            addTargetLogs('repetitive', 'Repetitive Risk', ['accuracy', 'precision', 'recall', 'f1_score']);
+            
+            let currentStep = 0;
+            
+            function stepAnimation() {
+                if (currentStep < trainingLogs.length) {
+                    bannerText.innerHTML = `<strong>Training Walkthrough:</strong> ${trainingLogs[currentStep].text}`;
+                    tbody.innerHTML += trainingLogs[currentStep].rowHtml;
+                    currentStep++;
+                    walkthroughTimeout = setTimeout(stepAnimation, 300); // 300ms delay per model training simulation
+                } else {
+                    bannerText.innerHTML = `<strong>Walkthrough Completed!</strong> Trained all 21 models (7 models &times; 3 targets). Highlights indicate best-performing algorithms deployed.`;
+                }
+            }
+            
+            stepAnimation();
+        }
+    </script>
+</body>
+</html>
