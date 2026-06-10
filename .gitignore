@@ -1,3 +1,11 @@
 *.csv
 *.xls
 *.xlsx
+*.log
+*.joblib
+models_10x/
+venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
