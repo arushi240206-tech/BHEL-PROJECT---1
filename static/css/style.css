@@ -773,3 +773,48 @@
             border-color: rgba(0, 53, 148, 0.15);
             transform: translateY(-2px);
         }
+
+        /* Proactive Alerts */
+        .alerts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .alert-banner {
+            background: rgba(239, 68, 68, 0.05);
+            border-left: 4px solid var(--danger);
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 5px rgba(239, 68, 68, 0.1);
+        }
+
+        .alert-icon {
+            color: var(--danger);
+        }
+
+        .alert-text {
+            color: var(--danger);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Flashing Animation */
+        @keyframes flashWarning {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .flash-warning {
+            animation: flashWarning 1.5s infinite;
+            background: rgba(239, 68, 68, 0.1) !important;
+            border-color: var(--danger) !important;
+        }
+
+        .flash-warning .val {
+            color: var(--danger) !important;
+        }

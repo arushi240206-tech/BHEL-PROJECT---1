@@ -49,6 +49,15 @@ def predict_multiple():
         ml_service = current_app.config['ML_SERVICE']
         results = ml_service.predict_multiple(requested_targets, inputs)
         
+        # Inject vendor stats if vendor name provided
+        vendor_name = inputs.get('Vendor_Name')
+        if vendor_name:
+            data_service = current_app.config['DATA_SERVICE']
+            avg_lead = data_service.get_vendor_stats(vendor_name)
+            if avg_lead is not None:
+                for t in results.values():
+                    t['vendor_lead_time'] = avg_lead
+        
         return jsonify({
             'status': 'success',
             'predictions': results
@@ -97,4 +106,40 @@ def equipment_analysis():
         })
     except Exception as e:
         print(f"Error in equipment_analysis: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@api_bp.route('/alerts', methods=['GET'])
+def get_alerts():
+    try:
+        data_service = current_app.config['DATA_SERVICE']
+        alerts = data_service.get_proactive_alerts()
+        return jsonify({'status': 'success', 'alerts': alerts})
+    except Exception as e:
+        print(f"Error serving alerts: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@api_bp.route('/smart_log', methods=['POST'])
+def smart_log():
+    try:
+        data = request.json or {}
+        query = data.get('query', '').strip()
+        
+        if not query:
+            return jsonify({'status': 'success', 'suggestions': None})
+            
+        data_service = current_app.config['DATA_SERVICE']
+        ml_service = current_app.config['ML_SERVICE']
+        
+        # Use a very generic filter (all data)
+        f_df = data_service.filter_data(2014, 2026, '', '')
+        
+        # We only need top 5 matches
+        result = ml_service.run_nlp_search(query, f_df, 5)
+        
+        return jsonify({
+            'status': 'success',
+            'suggestions': result.get('rca_summary')
+        })
+    except Exception as e:
+        print(f"Error in smart_log: {e}")
         return jsonify({'error': str(e)}), 500

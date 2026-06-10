@@ -5,12 +5,13 @@
         let trainingLogs = [];
         let walkthroughTimeout = null;
 
-        // On Load
         window.addEventListener('DOMContentLoaded', () => {
             loadMetadata();
             loadMLMetrics();
             loadMLMetadata();
+            loadAlerts();
             triggerUpdate();
+            setupSmartLogListener();
         });
 
         // Load Filter Metadata
@@ -795,13 +796,14 @@
                 
                 let valColor = 'var(--text-main)';
                 let extraHtml = '';
+                let extraClass = '';
                 
                 if (result.error) {
                     valColor = 'var(--danger)';
                     extraHtml = `<span style="color:var(--danger)">${result.error}</span>`;
                 } else {
                     if (result.type === 'classification') {
-                        extraHtml = `
+                        extraHtml += `
                             <div style="margin-top:0.5rem;">
                                 <span style="font-size:0.8rem; color:var(--text-muted);">Confidence Score</span>
                                 <div class="confidence-bar-bg">
@@ -810,7 +812,38 @@
                             </div>
                         `;
                     }
+                    
+                    // Vendor Lead Time
+                    if (result.vendor_lead_time) {
+                        extraHtml += `
+                            <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
+                                <strong>Vendor Note:</strong> This vendor historically takes ${result.vendor_lead_time} days.
+                            </div>
+                        `;
+                    }
+                    
+                    // Risk Warnings
+                    if (task === 'Resolution_Time' && result.prediction && parseFloat(result.prediction) > 90) {
+                        extraClass = 'flash-warning';
+                        extraHtml += `
+                            <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--danger); font-weight:bold;">
+                                🚨 SLA BREACH RISK - Penalty Likely
+                            </div>
+                        `;
+                    }
+                    
+                    // Check for Severity if Cost Debitable is Y (but we don't have cost debitable easily accessible here, so we will trigger overrun warning on Cost > 100k)
+                    if (task === 'Cost' && result.prediction && parseFloat(result.prediction.toString().replace(/,/g, '')) > 100000) {
+                        extraClass = 'flash-warning';
+                        extraHtml += `
+                            <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--danger); font-weight:bold;">
+                                🚨 HIGH COST OVERRUN RISK
+                            </div>
+                        `;
+                    }
                 }
+                
+                if (extraClass) card.classList.add(extraClass);
                 
                 const predVal = result.prediction || '-';
                 
@@ -1171,4 +1204,79 @@
                 console.error("NLP Search invocation failed", err);
                 resultsList.innerHTML = `<div style="color:var(--danger); padding:2rem; text-align:center;">Search failed: ${err.message}</div>`;
             }
+        }
+
+        // Proactive Alerts Logic
+        async function loadAlerts() {
+            try {
+                const response = await fetch('/api/alerts');
+                const data = await response.json();
+                if (data.status === 'success' && data.alerts && data.alerts.length > 0) {
+                    const container = document.getElementById('proactive-alerts-container');
+                    container.innerHTML = '';
+                    data.alerts.forEach(alert => {
+                        const banner = document.createElement('div');
+                        banner.className = 'alert-banner';
+                        banner.innerHTML = `
+                            <svg class="alert-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <span class="alert-text">${alert.message}</span>
+                        `;
+                        container.appendChild(banner);
+                    });
+                }
+            } catch (e) {
+                console.error("Error loading alerts:", e);
+            }
+        }
+
+        // Smart Log Debounce Logic
+        function setupSmartLogListener() {
+            const input = document.getElementById('smart-log-input');
+            if (!input) return;
+            
+            let debounceTimer;
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim();
+                
+                if (query.length < 10) {
+                    document.getElementById('smart-log-suggestions').style.display = 'none';
+                    return;
+                }
+                
+                debounceTimer = setTimeout(async () => {
+                    try {
+                        const response = await fetch('/api/smart_log', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ query: query })
+                        });
+                        const data = await response.json();
+                        
+                        const suggestions = data.suggestions; // This is actually the rca_summary dict
+                        if (data.status === 'success' && suggestions && Object.keys(suggestions.top_defects || {}).length > 0) {
+                            const topDefectsObj = suggestions.top_defects || {};
+                            
+                            const avgSev = suggestions.avg_severity || 0;
+                            const sevLabel = avgSev > 0.6 ? 'High' : (avgSev > 0.3 ? 'Medium' : 'Low');
+                            
+                            const learnings = suggestions.learnings || [];
+                            
+                            document.getElementById('smart-log-defect').innerHTML = Object.keys(topDefectsObj).map(k => `<li style="margin-bottom: 0.25rem;">${k} (Count: ${topDefectsObj[k]})</li>`).join('');
+                            document.getElementById('smart-log-severity').innerHTML = `<li style="margin-bottom: 0.25rem;">Average: ${avgSev.toFixed(2)} (${sevLabel})</li>`;
+                            document.getElementById('smart-log-learning').innerHTML = learnings.length > 0 ? learnings.map(l => `<div style="padding: 1rem; background: white; border-radius: 0.25rem; border: 1px dashed #cbd5e1; font-style: italic;">${l}</div>`).join('') : '<div style="padding: 1rem; background: white; border-radius: 0.25rem; border: 1px dashed #cbd5e1; font-style: italic;">No specific past solution found.</div>';
+                            
+                            document.getElementById('smart-log-suggestions').style.display = 'block';
+                        }
+                    } catch (e) {
+                        console.error("Smart log fetch failed", e);
+                    }
+                }, 800);
+            });
+        }
+        
+        function submitSmartLog() {
+            alert("Complaint Drafted Successfully! (Simulation Mode: Not written to database)");
+            document.getElementById('smart-log-input').value = '';
+            document.getElementById('smart-log-suggestions').style.display = 'none';
         }

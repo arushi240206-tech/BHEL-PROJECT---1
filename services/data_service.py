@@ -341,3 +341,35 @@ class DataService:
                 })
                 
         return equipment_data
+
+    def get_proactive_alerts(self):
+        if self.df.empty:
+            return []
+            
+        recent_df = self.df.sort_values('Complaint Date', ascending=False).head(100)
+        recent_df = recent_df.dropna(subset=['Equipment Name'])
+        freq = recent_df['Equipment Name'].value_counts()
+        
+        alerts = []
+        for eq, count in freq.items():
+            if count >= 3 and str(eq).lower() not in ['nan', 'unknown', 'none']:
+                alerts.append({
+                    'equipment': str(eq),
+                    'recent_failures': int(count),
+                    'message': f"Critical Alert: {eq} has failed {count} times recently."
+                })
+        return alerts[:5]
+
+    def get_vendor_stats(self, vendor_name):
+        if self.df.empty or not vendor_name:
+            return None
+            
+        v_df = self.df[self.df['Vendor Name'].str.lower() == str(vendor_name).lower()]
+        if v_df.empty:
+            return None
+            
+        avg_res = v_df['Days Taken for Disposition'].mean()
+        if pd.isna(avg_res):
+            return None
+            
+        return round(float(avg_res), 1)
