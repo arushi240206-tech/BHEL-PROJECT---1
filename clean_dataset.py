@@ -147,6 +147,29 @@ def clean_data():
         }
         df['Status'] = df['Status'].replace(status_mapping)
         
+    # 8. Merge PGMA Description from NS_LIST
+    print("Enriching PGMA with NS_LIST master data...")
+    try:
+        ns_xls = pd.ExcelFile('NS_LIST.xlsx')
+        pgma_df = pd.read_excel(ns_xls, sheet_name='PGMA')
+        # Standardize join columns to string, ignoring leading zeros
+        if 'PGMA' in df.columns and 'pgma' in pgma_df.columns:
+            df['PGMA_join'] = df['PGMA'].astype(str).str.strip().str.lstrip('0')
+            pgma_df['pgma_join'] = pgma_df['pgma'].astype(str).str.strip().str.lstrip('0')
+            
+            # Map description
+            pgma_map = pgma_df.drop_duplicates(subset=['pgma_join']).set_index('pgma_join')['Description']
+            df['PGMA Description'] = df['PGMA_join'].map(pgma_map)
+            df.drop(columns=['PGMA_join'], inplace=True)
+            
+            # Create a unified Equipment Name (fallback to Product if PGMA is unknown)
+            df['Equipment Name'] = df['PGMA Description'].fillna(df['Product'])
+            print("Successfully merged PGMA Descriptions and created Equipment Name.")
+        else:
+            print("Warning: Could not find required PGMA columns for join.")
+    except Exception as e:
+        print(f"Warning: Failed to load NS_LIST.xlsx or merge PGMA. Error: {e}")
+        
     # Write to cleaned CSV
     output_path = "10yearsdata_cleaned.csv"
     df.to_csv(output_path, index=False)

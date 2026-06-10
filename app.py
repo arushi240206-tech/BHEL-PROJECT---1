@@ -82,7 +82,9 @@ def initialize_dashboard_backend():
         'Defect Sub-type Description',
         'Problem Nature Keywords',
         'Product',
-        'Project'
+        'Project',
+        'PGMA Description',
+        'Equipment Name'
     ]
     search_corpus = df[corpus_columns].fillna('').agg(' '.join, axis=1)
     tfidf_vectorizer = TfidfVectorizer(
@@ -571,6 +573,83 @@ def run_nlp_search():
         })
     except Exception as e:
         print(f"Error during NLP search: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/equipment_analysis', methods=['POST'])
+def equipment_analysis():
+    try:
+        data = request.json or {}
+        start_year = int(data.get('start_year', 2014))
+        end_year = int(data.get('end_year', 2026))
+        region = data.get('region', '')
+        unit = data.get('unit', '')
+        
+        # Filter dataframe
+        f_df = df.copy()
+        f_df = f_df[(f_df['Complaint Year'] >= start_year) & (f_df['Complaint Year'] <= end_year)]
+        
+        if region:
+            f_df = f_df[f_df['Region'] == region]
+        if unit:
+            f_df = f_df[f_df['Unit'] == unit]
+            
+        if f_df.empty:
+            return jsonify({'equipment_data': []})
+            
+        # Drop rows where PGMA Description is missing to ensure we only show granular equipment components
+        f_df = f_df.dropna(subset=['PGMA Description'])
+            
+        # Group by Equipment Name to find top 5 failure-prone equipment
+        top_products = f_df['Equipment Name'].value_counts().head(5)
+        
+        equipment_data = []
+        
+        for product_name, count in top_products.items():
+            if pd.isna(product_name) or product_name == 'Unknown':
+                continue
+                
+            prod_df = f_df[f_df['Equipment Name'] == product_name]
+            
+            # Top 2 Defects for this product
+            top_defects = prod_df['Defect Type'].value_counts().head(2)
+            
+            defects_list = []
+            for defect_name, defect_count in top_defects.items():
+                if pd.isna(defect_name) or defect_name == 'Unknown':
+                    continue
+                    
+                defect_df = prod_df[prod_df['Defect Type'] == defect_name]
+                
+                # Get most common Unit Disposition
+                dispositions = defect_df['Unit Disposition'].dropna().astype(str)
+                dispositions = dispositions[~dispositions.isin(['', '--', 'UNKNOWN', 'nan', 'None'])]
+                top_disposition = dispositions.mode()[0] if not dispositions.empty else "No standard disposition found."
+                
+                # Get most common or relevant Learning Derived
+                learnings = defect_df['Learning Derived'].dropna().astype(str)
+                learnings = learnings[~learnings.isin(['', '--', 'UNKNOWN', 'nan', 'None'])]
+                top_learning = learnings.mode()[0] if not learnings.empty else "No specific learnings recorded."
+                
+                defects_list.append({
+                    'defect_name': defect_name,
+                    'count': int(defect_count),
+                    'disposition': top_disposition,
+                    'learning': top_learning
+                })
+                
+            if defects_list:
+                equipment_data.append({
+                    'product_name': product_name,
+                    'total_complaints': int(count),
+                    'defects': defects_list
+                })
+                
+        return jsonify({
+            'status': 'success',
+            'equipment_data': equipment_data
+        })
+    except Exception as e:
+        print(f"Error in equipment_analysis: {e}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

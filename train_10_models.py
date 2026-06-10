@@ -47,10 +47,17 @@ def load_and_preprocess():
     df['Reliability_Index'] = df['Reliability_Index'].clip(lower=0, upper=100)
     
     # 3. Categorical Fill
-    cat_cols = ['Product', 'Item', 'Defect_Type', 'Complaint_Type', 'Unit', 'Region', 'Vendor_Code']
+    cat_cols = ['Product', 'Equipment_Name', 'Item', 'Defect_Type', 'Complaint_Type', 'Unit', 'Region', 'Vendor_Code', 'Unit_Disposition']
     for c in cat_cols:
         if c in df.columns:
             df[c] = df[c].fillna('UNKNOWN').astype(str).str.strip().str.upper()
+            
+            # Collapse high cardinality to prevent massive tree counts in LightGBM
+            if c == 'Unit_Disposition':
+                counts = df[c].value_counts()
+                if len(counts) > 20:
+                    top_classes = counts.head(19).index
+                    df[c] = df[c].apply(lambda x: x if x in top_classes else 'OTHER_DISPOSITION')
     
     df['Problem_Description'] = df.get('Problem_Description', '').fillna('No description')
     
@@ -169,10 +176,10 @@ def train_target(task_name, df, feature_cols, target_col, is_classification, lab
 def main():
     df = load_and_preprocess()
     
-    cat_cols = ['Product', 'Item', 'Defect_Type', 'Complaint_Type', 'Unit', 'Region', 'Vendor_Code']
+    cat_cols = ['Product', 'Equipment_Name', 'Item', 'Defect_Type', 'Complaint_Type', 'Unit', 'Region', 'Vendor_Code', 'Unit_Disposition']
     df_encoded, label_mappings = build_encoders(df, cat_cols)
     
-    std_features = ['Product', 'Item', 'Complaint_Type', 'Unit', 'Region', 'Vendor_Code']
+    std_features = ['Equipment_Name', 'Item', 'Complaint_Type', 'Unit', 'Region', 'Vendor_Code']
     
     tasks = [
         # task_name, target_col, is_classification, is_nlp, specific_features
@@ -186,6 +193,7 @@ def main():
         ('Delay', 'Is_Delayed', True, False, std_features + ['Defect_Type']),
         ('Warranty_Recovery', 'Debit_Recovered', True, False, std_features),
         ('Reliability', 'Reliability_Index', False, False, std_features),
+        ('Resolution_Strategy', 'Unit_Disposition', True, False, std_features + ['Defect_Type']),
     ]
     
     results = []
