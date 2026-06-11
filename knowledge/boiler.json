@@ -1,0 +1,130 @@
+{
+  "equipment_type": "Boiler",
+  "keywords": ["boiler", "drum", "superheater", "reheater", "economizer", "waterwall", "header", "tube", "furnace", "burner", "coal mill", "air preheater", "APH", "LTSH", "HTSH", "platen", "pendant", "attemperator", "desuperheater", "downcomer", "riser"],
+  "common_failures": [
+    {
+      "failure": "Boiler tube leakage",
+      "probable_causes": [
+        "Erosion due to high-velocity flue gas impingement",
+        "Corrosion from high sulfur content in coal",
+        "Overheating due to internal scale deposit or flow blockage",
+        "Weld joint failure from thermal fatigue cycling",
+        "Fly ash erosion at tube bends and penetration areas"
+      ],
+      "diagnostic_procedures": [
+        "Perform ultrasonic thickness measurement on affected tubes",
+        "Conduct visual inspection for bulging, discoloration, or pinhole marks",
+        "Check boiler water chemistry — pH, dissolved oxygen, phosphate levels",
+        "Review tube metal temperature trends from thermocouples",
+        "Analyze failed tube sample for metallurgical root cause"
+      ],
+      "corrective_actions": [
+        "Replace affected tube section with matching grade material",
+        "Install erosion-resistant shields or baffles at high-wear zones",
+        "Perform hydrostatic test after tube replacement to confirm integrity",
+        "Normalize weld joints post-repair per ASME standards"
+      ],
+      "preventive_actions": [
+        "Schedule periodic UT thickness surveys during planned outages",
+        "Maintain boiler water chemistry within BHEL recommended limits",
+        "Install erosion monitoring probes at known high-erosion zones",
+        "Review and optimize soot blower operation sequence"
+      ],
+      "safety_precautions": [
+        "Ensure complete boiler shutdown and depressurization before entry",
+        "Follow confined space entry procedures for drum/header inspection",
+        "Verify scaffolding integrity before tube repair at elevation"
+      ]
+    },
+    {
+      "failure": "Superheater/Reheater tube failure",
+      "probable_causes": [
+        "Long-term overheating due to steam temperature excursion",
+        "Short-term overheating from steam flow starvation",
+        "Fireside corrosion from alkali metal deposits",
+        "Thermal fatigue at attachment welds"
+      ],
+      "diagnostic_procedures": [
+        "Check steam temperature records for excursions beyond design limits",
+        "Inspect tube external surface for thick oxide scale or wastage",
+        "Perform creep damage assessment on high-temperature sections",
+        "Review attemperator spray operation and control logic"
+      ],
+      "corrective_actions": [
+        "Replace failed tube coil with upgraded material (T91/T22 as applicable)",
+        "Recalibrate attemperator spray valves",
+        "Clean internal deposits by chemical cleaning if scale buildup detected"
+      ],
+      "preventive_actions": [
+        "Implement oxide scale thickness monitoring program",
+        "Review and limit unit cycling to reduce thermal fatigue",
+        "Ensure attemperator spray systems are regularly tested"
+      ],
+      "safety_precautions": [
+        "Ensure steam lines are fully drained and depressurized before work",
+        "Use proper PPE for high-temperature zone inspections"
+      ]
+    },
+    {
+      "failure": "Coal mill/pulverizer malfunction",
+      "probable_causes": [
+        "Grinding element wear (balls, rings, hammers)",
+        "Classifier cone damage affecting fineness",
+        "Hot air duct leakage reducing drying capacity",
+        "Feeder malfunction causing uneven coal feed"
+      ],
+      "diagnostic_procedures": [
+        "Measure coal fineness at mill outlet (target: 70% through 200 mesh)",
+        "Check grinding element wear by visual inspection or measurement",
+        "Review mill differential pressure and motor current trends",
+        "Inspect reject hopper for oversized particles or foreign material"
+      ],
+      "corrective_actions": [
+        "Replace worn grinding elements",
+        "Repair or replace damaged classifier assembly",
+        "Seal hot air duct leakages",
+        "Overhaul coal feeder mechanism"
+      ],
+      "preventive_actions": [
+        "Track mill power consumption trending for early wear detection",
+        "Schedule grinding element replacement based on operating hours",
+        "Maintain coal quality within design specifications"
+      ],
+      "safety_precautions": [
+        "Inert the mill completely before any internal inspection",
+        "Follow fire/explosion prevention procedures during mill maintenance",
+        "Ensure mill is isolated from hot air and coal supply before entry"
+      ]
+    },
+    {
+      "failure": "Air preheater (APH) choking or fire",
+      "probable_causes": [
+        "Ash deposition and fouling of heating elements",
+        "Cold-end corrosion due to acid dew point condensation",
+        "Unburnt coal particles depositing and igniting in APH",
+        "Seal leakage increasing air-to-gas bypass"
+      ],
+      "diagnostic_procedures": [
+        "Monitor APH differential pressure trending",
+        "Check gas outlet temperature for signs of choking",
+        "Inspect heating elements for ash buildup during shutdown",
+        "Review soot blower effectiveness logs"
+      ],
+      "corrective_actions": [
+        "Water wash the APH during planned shutdown if severely fouled",
+        "Replace corroded cold-end baskets with enamel-coated elements",
+        "Adjust combustion to minimize unburnt carbon in flue gas",
+        "Replace worn APH seals"
+      ],
+      "preventive_actions": [
+        "Optimize soot blower sequence and frequency for APH",
+        "Maintain flue gas temperature above acid dew point at cold end",
+        "Install online APH washing system if fouling is chronic"
+      ],
+      "safety_precautions": [
+        "In case of APH fire, follow emergency firefighting procedure immediately",
+        "Ensure fire detection system is operational before unit startup"
+      ]
+    }
+  ]
+}

@@ -12,6 +12,7 @@
             loadAlerts();
             triggerUpdate();
             setupSmartLogListener();
+            loadAIEquipmentTypes();
         });
 
         // Load Filter Metadata
@@ -70,6 +71,11 @@
             // If walkthrough view and metrics loaded, run walkthrough animation
             if (viewId === 'model-report' && mlMetrics && trainingLogs.length === 0) {
                 runWalkthroughAnimation();
+            }
+
+            // Load AI Analytics data when the view is activated
+            if (viewId === 'ai-analytics') {
+                loadAIAnalytics();
             }
 
             // Resize NLP pane after scroll settles
@@ -1279,4 +1285,307 @@
             alert("Complaint Drafted Successfully! (Simulation Mode: Not written to database)");
             document.getElementById('smart-log-input').value = '';
             document.getElementById('smart-log-suggestions').style.display = 'none';
+        }
+
+        // ================================================================
+        // AI ASSISTANT — Recommendation Engine
+        // ================================================================
+        let lastAIResult = null;
+
+        async function loadAIEquipmentTypes() {
+            try {
+                const res = await fetch('/api/ai/knowledge_types');
+                const data = await res.json();
+                const select = document.getElementById('ai-equipment-select');
+                if (select && data.types) {
+                    data.types.forEach(t => {
+                        const opt = document.createElement('option');
+                        opt.value = t;
+                        opt.textContent = t;
+                        select.appendChild(opt);
+                    });
+                }
+            } catch(e) { console.warn('Could not load AI equipment types', e); }
+        }
+
+        async function fetchAIRecommendation() {
+            const query = document.getElementById('ai-query-input').value.trim();
+            if (!query) return;
+
+            const equipment = document.getElementById('ai-equipment-select').value || null;
+            const panel = document.getElementById('ai-recommendation-panel');
+            panel.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/ai/recommend', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({query, equipment_type: equipment})
+                });
+                const data = await res.json();
+                if (data.status !== 'success') {
+                    alert('Error: ' + (data.error || 'Unknown'));
+                    return;
+                }
+
+                lastAIResult = data;
+                renderAIRecommendation(data);
+                panel.style.display = 'block';
+                document.getElementById('ai-feedback-status').style.display = 'none';
+            } catch(e) {
+                console.error('AI Recommendation failed', e);
+                alert('Failed to get recommendation: ' + e.message);
+            }
+        }
+
+        function renderAIRecommendation(data) {
+            const rec = data.recommendation;
+            const explanation = data.explanation;
+
+            // Confidence
+            const confEl = document.getElementById('ai-confidence-score');
+            const conf = rec.confidence_score || 0;
+            confEl.textContent = conf + '%';
+            confEl.style.color = conf >= 60 ? '#10b981' : conf >= 30 ? 'var(--bhel-orange)' : 'var(--danger)';
+
+            // Equipment detected
+            const eqEl = document.getElementById('ai-equipment-detected');
+            eqEl.textContent = data.equipment_type_detected ? `Equipment: ${data.equipment_type_detected}` : '';
+
+            // Root causes
+            document.getElementById('ai-root-causes').innerHTML =
+                (rec.probable_root_causes || []).map(c => `<li style="margin-bottom:0.4rem;">${c}</li>`).join('') || '<li>None identified</li>';
+
+            // Diagnostic checks
+            document.getElementById('ai-diagnostic-checks').innerHTML =
+                (rec.diagnostic_checks || []).map(c => `<li style="margin-bottom:0.4rem;">${c}</li>`).join('') || '<li>No specific checks available</li>';
+
+            // Recommended actions
+            document.getElementById('ai-recommended-actions').innerHTML =
+                (rec.recommended_actions || []).map(a => `<li style="margin-bottom:0.4rem;">${a}</li>`).join('') || '<li>No actions available</li>';
+
+            // Preventive measures
+            document.getElementById('ai-preventive-measures').innerHTML =
+                (rec.preventive_measures || []).map(m => `<li style="margin-bottom:0.4rem;">${m}</li>`).join('') || '<li>No measures available</li>';
+
+            // Safety
+            document.getElementById('ai-safety-precautions').innerHTML =
+                (rec.safety_precautions || []).map(s => `<li style="margin-bottom:0.4rem;">${s}</li>`).join('') || '<li>Follow standard safety procedures</li>';
+
+            // Similar cases
+            const casesEl = document.getElementById('ai-similar-cases');
+            const cases = data.similar_cases || [];
+            casesEl.innerHTML = cases.slice(0, 5).map(c => `
+                <div style="padding: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.85rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                        <strong>${c.complaint_number}</strong>
+                        <span style="color: ${c.semantic_score > 0.7 ? '#10b981' : c.semantic_score > 0.4 ? 'var(--bhel-orange)' : 'var(--danger)'}; font-weight: 700;">${(c.semantic_score * 100).toFixed(0)}% match</span>
+                    </div>
+                    <div style="color: var(--text-muted); margin-bottom: 0.3rem;"><strong>Equipment:</strong> ${c.equipment} | <strong>Defect:</strong> ${c.defect_type}</div>
+                    <div style="margin-bottom: 0.3rem;"><strong>Problem:</strong> ${c.problem_summary}</div>
+                    ${c.resolution ? `<div style="color: #10b981;"><strong>Resolution:</strong> ${c.resolution}</div>` : ''}
+                    ${c.learning ? `<div style="color: var(--bhel-orange); margin-top: 0.3rem;"><strong>Learning:</strong> ${c.learning}</div>` : ''}
+                </div>
+            `).join('') || '<div style="color: var(--text-muted);">No similar cases found</div>';
+
+            // Explanation
+            document.getElementById('ai-explanation-text').textContent = explanation?.reasoning || 'No explanation available.';
+
+            // Pre-fill case submission fields
+            if (rec.probable_root_causes?.length > 0) {
+                document.getElementById('case-defect').value = rec.probable_root_causes[0];
+            }
+            if (data.equipment_type_detected) {
+                document.getElementById('case-equipment').value = data.equipment_type_detected;
+            }
+        }
+
+        async function submitAIFeedback(rating) {
+            if (!lastAIResult) return;
+            try {
+                const topCase = lastAIResult.similar_cases?.[0];
+                await fetch('/api/ai/feedback', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        query: document.getElementById('ai-query-input').value,
+                        recommendation_id: lastAIResult.recommendation_id,
+                        equipment_type: lastAIResult.equipment_type_detected || '',
+                        defect_type: topCase?.defect_type || '',
+                        rating: rating
+                    })
+                });
+                const statusEl = document.getElementById('ai-feedback-status');
+                statusEl.textContent = rating === 'helpful' ? '✓ Thank you! Feedback recorded.' : '✓ Feedback recorded. We\'ll improve.';
+                statusEl.style.display = 'inline';
+            } catch(e) { console.error('Feedback submit failed', e); }
+        }
+
+        async function submitResolvedCase() {
+            const caseData = {
+                problem_description: document.getElementById('ai-query-input').value,
+                equipment_name: document.getElementById('case-equipment').value,
+                defect_type: document.getElementById('case-defect').value,
+                severity: document.getElementById('case-severity').value,
+                resolution: document.getElementById('case-resolution').value,
+                learning_derived: document.getElementById('case-learning').value
+            };
+
+            if (!caseData.problem_description || !caseData.resolution) {
+                alert('Please fill in at least the problem description and resolution.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/ai/submit_case', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(caseData)
+                });
+                const data = await res.json();
+                const statusEl = document.getElementById('case-submit-status');
+                statusEl.textContent = `✓ Case ${data.case_id} submitted for review. It will be included in training data after approval.`;
+                statusEl.style.display = 'block';
+            } catch(e) { console.error('Case submit failed', e); }
+        }
+
+        // ================================================================
+        // AI ANALYTICS
+        // ================================================================
+        async function loadAIAnalytics() {
+            await Promise.all([
+                loadEquipmentHealth(),
+                loadFeedbackAnalytics(),
+                loadPendingCases()
+            ]);
+        }
+
+        async function loadEquipmentHealth() {
+            try {
+                const res = await fetch('/api/ai/equipment_health');
+                const data = await res.json();
+                if (data.status !== 'success') return;
+
+                const equipment = data.equipment || [];
+                const container = document.getElementById('ai-equipment-health-table');
+                if (!container) return;
+
+                const priorityColors = {Critical: '#ef4444', High: '#f97316', Medium: '#eab308', Low: '#10b981'};
+
+                container.innerHTML = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: left;">
+                                <th style="padding: 0.75rem;">Equipment</th>
+                                <th style="padding: 0.75rem;">Total</th>
+                                <th style="padding: 0.75rem;">Recent</th>
+                                <th style="padding: 0.75rem;">Trend</th>
+                                <th style="padding: 0.75rem;">Severity</th>
+                                <th style="padding: 0.75rem;">Repeat %</th>
+                                <th style="padding: 0.75rem;">Avg Days</th>
+                                <th style="padding: 0.75rem;">Risk</th>
+                                <th style="padding: 0.75rem;">Fail Prob</th>
+                                <th style="padding: 0.75rem;">Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${equipment.slice(0, 20).map(eq => `
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 0.5rem 0.75rem; font-weight: 600;">${eq.equipment_name}</td>
+                                    <td style="padding: 0.5rem 0.75rem;">${eq.total_complaints}</td>
+                                    <td style="padding: 0.5rem 0.75rem;">${eq.recent_complaints}</td>
+                                    <td style="padding: 0.5rem 0.75rem;">
+                                        <span style="color: ${eq.failure_trend === 'accelerating' ? '#ef4444' : eq.failure_trend === 'declining' ? '#10b981' : '#6b7280'};">
+                                            ${eq.failure_trend === 'accelerating' ? '↑' : eq.failure_trend === 'declining' ? '↓' : '→'} ${eq.failure_trend}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 0.5rem 0.75rem;">${eq.avg_severity}</td>
+                                    <td style="padding: 0.5rem 0.75rem;">${eq.repeat_rate}%</td>
+                                    <td style="padding: 0.5rem 0.75rem;">${eq.avg_resolution_days}</td>
+                                    <td style="padding: 0.5rem 0.75rem;">
+                                        <div style="background: #e2e8f0; border-radius: 4px; height: 8px; width: 60px;">
+                                            <div style="background: ${priorityColors[eq.maintenance_priority]}; border-radius: 4px; height: 8px; width: ${Math.round(eq.risk_score * 60)}px;"></div>
+                                        </div>
+                                        <span style="font-size: 0.75rem;">${(eq.risk_score * 100).toFixed(0)}%</span>
+                                    </td>
+                                    <td style="padding: 0.5rem 0.75rem; font-weight: 700;">${eq.failure_probability}%</td>
+                                    <td style="padding: 0.5rem 0.75rem;">
+                                        <span style="background: ${priorityColors[eq.maintenance_priority]}; color: white; padding: 0.15rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 700;">${eq.maintenance_priority}</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch(e) { console.error('Equipment health load failed', e); }
+        }
+
+        async function loadFeedbackAnalytics() {
+            try {
+                const res = await fetch('/api/ai/feedback_analytics');
+                const data = await res.json();
+                if (data.status !== 'success') return;
+
+                const summary = document.getElementById('ai-feedback-summary');
+                if (summary) {
+                    summary.innerHTML = `
+                        <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 0.5rem;">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;">${data.helpful_count}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Helpful</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #fef2f2; border-radius: 0.5rem;">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #ef4444;">${data.not_helpful_count}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Not Helpful</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #eff6ff; border-radius: 0.5rem;">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--bhel-blue);">${data.helpfulness_rate}%</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Accuracy Rate</div>
+                        </div>
+                    `;
+                }
+            } catch(e) { console.error('Feedback analytics load failed', e); }
+        }
+
+        async function loadPendingCases() {
+            try {
+                const res = await fetch('/api/ai/pending_cases');
+                const data = await res.json();
+                if (data.status !== 'success') return;
+
+                const container = document.getElementById('ai-pending-cases-list');
+                if (!container) return;
+
+                const cases = data.cases || [];
+                if (cases.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No pending cases. All caught up! ✓</div>';
+                    return;
+                }
+
+                container.innerHTML = cases.map(c => `
+                    <div style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Case ${c.case_id}</strong>
+                            <button class="btn btn-blue" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;" onclick="approveCase('${c.case_id}')">Approve</button>
+                        </div>
+                        <div style="color: var(--text-muted); margin-top: 0.3rem;">${(c.problem_description || '').substring(0, 100)}...</div>
+                        <div style="margin-top: 0.3rem;"><strong>Equipment:</strong> ${c.equipment_name || 'N/A'} | <strong>Defect:</strong> ${c.defect_type || 'N/A'}</div>
+                    </div>
+                `).join('');
+            } catch(e) { console.error('Pending cases load failed', e); }
+        }
+
+        async function approveCase(caseId) {
+            try {
+                const res = await fetch('/api/ai/approve_case', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({case_id: caseId})
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    loadPendingCases(); // refresh
+                } else {
+                    alert(data.error || 'Approval failed');
+                }
+            } catch(e) { console.error('Case approval failed', e); }
         }

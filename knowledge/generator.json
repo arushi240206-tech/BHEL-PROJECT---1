@@ -1,0 +1,99 @@
+{
+  "equipment_type": "Generator",
+  "keywords": ["generator", "stator", "rotor", "exciter", "AVR", "field winding", "stator winding", "hydrogen", "H2 seal", "slip ring", "brush", "generator bearing", "stator cooling water", "SCW", "isophase bus duct", "generator transformer", "neutral grounding", "field breaker"],
+  "common_failures": [
+    {
+      "failure": "Generator stator winding insulation failure",
+      "probable_causes": [
+        "Insulation aging and embrittlement from thermal cycling",
+        "Partial discharge activity in end-winding region",
+        "Contamination from moisture, oil, or dust ingress",
+        "Mechanical looseness of stator bars in slots"
+      ],
+      "diagnostic_procedures": [
+        "Perform insulation resistance and polarization index (PI) test",
+        "Conduct partial discharge measurement — online or offline",
+        "Test tan-delta at various voltage steps for tip-up analysis",
+        "Visually inspect end-windings for contamination, loose ties, or tracking"
+      ],
+      "corrective_actions": [
+        "Re-wedge loose stator bars in slots",
+        "Clean and re-varnish contaminated winding sections",
+        "Replace severely damaged stator bar coils",
+        "Tighten or replace end-winding support ties and blocks"
+      ],
+      "preventive_actions": [
+        "Schedule annual offline insulation testing during planned outage",
+        "Install online partial discharge monitoring system",
+        "Maintain generator enclosure sealing to prevent contamination",
+        "Record and trend insulation test results over the years"
+      ],
+      "safety_precautions": [
+        "High voltage testing — follow strict HV safety procedures",
+        "Ensure generator is de-energized, grounded, and isolated before any winding work",
+        "Hydrogen must be fully purged before opening generator casing"
+      ]
+    },
+    {
+      "failure": "Generator hydrogen seal oil leakage",
+      "probable_causes": [
+        "Seal ring wear or scoring",
+        "Seal oil pressure differential deviation",
+        "Hydrogen side seal drain not functioning properly",
+        "Shaft surface finish deterioration at seal area"
+      ],
+      "diagnostic_procedures": [
+        "Monitor hydrogen purity trend — decreasing purity indicates seal leak",
+        "Check seal oil differential pressure across hydrogen and air side",
+        "Inspect seal drain sight glasses for abnormal flow",
+        "Review hydrogen makeup rate trending"
+      ],
+      "corrective_actions": [
+        "Replace worn seal rings during major overhaul",
+        "Restore shaft surface finish at seal contact area",
+        "Adjust seal oil system pressure regulators",
+        "Repair or replace seal oil drain system components"
+      ],
+      "preventive_actions": [
+        "Monitor hydrogen purity and makeup rate daily",
+        "Maintain seal oil quality — filtration and moisture control",
+        "Plan seal ring replacement during scheduled overhauls"
+      ],
+      "safety_precautions": [
+        "Hydrogen is explosive — strictly no smoking or open flames near generator",
+        "Follow hydrogen handling and purging procedures meticulously",
+        "Ensure gas detection alarms are operational"
+      ]
+    },
+    {
+      "failure": "Excitation system or brush gear problems",
+      "probable_causes": [
+        "Brush wear or incorrect spring pressure",
+        "Slip ring surface roughness or eccentricity",
+        "AVR control malfunction",
+        "Exciter field winding insulation deterioration"
+      ],
+      "diagnostic_procedures": [
+        "Inspect brush condition — length, contact area, sparking level",
+        "Measure slip ring runout and surface finish",
+        "Test AVR control cards and thyristor firing circuits",
+        "Perform exciter field winding insulation resistance test"
+      ],
+      "corrective_actions": [
+        "Replace brushes and adjust spring pressure to OEM specification",
+        "Machine slip rings to restore surface finish if runout exceeds limits",
+        "Replace faulty AVR control cards",
+        "Repair exciter winding insulation or re-wind if necessary"
+      ],
+      "preventive_actions": [
+        "Schedule regular brush inspection and replacement",
+        "Track slip ring runout measurements during outages",
+        "Keep spare AVR cards and exciter components in stock"
+      ],
+      "safety_precautions": [
+        "Carbon dust from brushes is conductive — maintain cleanliness",
+        "Brush replacement on running machine requires trained personnel only"
+      ]
+    }
+  ]
+}

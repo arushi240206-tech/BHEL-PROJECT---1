@@ -1,0 +1,98 @@
+{
+  "equipment_type": "Transformer",
+  "keywords": ["transformer", "CT", "PT", "bushing", "winding", "tap changer", "OLTC", "insulation", "oil", "transformer oil", "Buchholz", "cooling fan", "radiator", "conservator", "breather", "HV", "LV", "power transformer", "station transformer", "unit transformer", "unit auxiliary transformer", "UAT"],
+  "common_failures": [
+    {
+      "failure": "Transformer oil degradation or contamination",
+      "probable_causes": [
+        "Moisture ingress through deteriorated silica gel breather",
+        "Oxidation of oil due to aging and thermal stress",
+        "Cellulose insulation degradation releasing dissolved gases",
+        "External contamination through leaking gaskets or seals"
+      ],
+      "diagnostic_procedures": [
+        "Perform dissolved gas analysis (DGA) — key gases: H2, CH4, C2H2, C2H4, CO",
+        "Test oil BDV (breakdown voltage), moisture content, acidity, IFT",
+        "Check furan content for cellulose insulation aging assessment",
+        "Inspect silica gel breather — color change indicates moisture saturation"
+      ],
+      "corrective_actions": [
+        "Filter and dehydrate transformer oil using online filtration plant",
+        "Replace oil charge if acidity or moisture beyond recoverable limits",
+        "Replace deteriorated silica gel in breather",
+        "Repair gasket leaks at flanges and valve joints"
+      ],
+      "preventive_actions": [
+        "Schedule DGA testing quarterly for critical transformers",
+        "Maintain silica gel breather in good condition — replace when saturated",
+        "Monitor oil temperature and loading to prevent accelerated aging",
+        "Install online DGA monitoring for important transformers"
+      ],
+      "safety_precautions": [
+        "Transformer oil is combustible — maintain fire protection systems",
+        "Use proper PPE when handling oil samples",
+        "De-energize and isolate transformer before any oil system maintenance"
+      ]
+    },
+    {
+      "failure": "Transformer bushing failure",
+      "probable_causes": [
+        "Moisture ingress into bushing condenser core",
+        "Partial discharge due to internal voids or contamination",
+        "External flashover from pollution or rain on bushing surface",
+        "Capacitance change indicating insulation deterioration"
+      ],
+      "diagnostic_procedures": [
+        "Measure bushing tan-delta and capacitance values",
+        "Perform partial discharge measurement",
+        "Inspect bushing surface for cracks, chipping, or tracking marks",
+        "Check oil level in oil-filled bushings"
+      ],
+      "corrective_actions": [
+        "Replace bushing if tan-delta exceeds limits",
+        "Clean bushing external surface with approved cleaning agents",
+        "Top up oil in oil-filled bushings if low",
+        "Replace gaskets if oil leakage observed at bushing flange"
+      ],
+      "preventive_actions": [
+        "Include bushing tan-delta test in annual maintenance schedule",
+        "Keep bushing surfaces clean — wash during planned outages",
+        "Monitor bushing oil level through sight glass regularly"
+      ],
+      "safety_precautions": [
+        "Bushing failure can cause catastrophic explosion — maintain safe distance during testing",
+        "Always de-energize and ground transformer before bushing work"
+      ]
+    },
+    {
+      "failure": "On-Load Tap Changer (OLTC) malfunction",
+      "probable_causes": [
+        "Contact wear or pitting from arcing during tap change",
+        "Mechanism drive shaft misalignment",
+        "OLTC oil contamination with carbon deposits",
+        "Diverter switch timing error"
+      ],
+      "diagnostic_procedures": [
+        "Analyze OLTC oil separately — DGA and particle count",
+        "Check contact resistance across all tap positions",
+        "Verify tap changer operation cycle time and sequence",
+        "Inspect mechanism drive linkages for wear"
+      ],
+      "corrective_actions": [
+        "Overhaul OLTC — replace worn contacts and springs",
+        "Flush and replace OLTC oil",
+        "Realign drive mechanism and adjust timing",
+        "Replace diverter switch if arcing damage is extensive"
+      ],
+      "preventive_actions": [
+        "Schedule OLTC overhaul based on number of tap operations (typically 50,000-100,000)",
+        "Test OLTC oil quality separately from main tank oil",
+        "Record and trend tap operation counter and motor current"
+      ],
+      "safety_precautions": [
+        "Isolate OLTC motor supply before maintenance",
+        "OLTC compartment may contain gases — ventilate before entry"
+      ]
+    }
+  ]
+}

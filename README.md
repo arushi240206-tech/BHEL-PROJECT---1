@@ -1,30 +1,42 @@
 # BHEL Predictive Analytics Dashboard
 
-A machine learning-powered predictive analytics dashboard for BHEL (Bharat Heavy Electricals Limited), providing insights into 10 years of operational data, predicting SLA delays, analyzing root causes (RCA), and performing semantic searches across unstructured complaint texts.
+A machine learning-powered predictive analytics dashboard for BHEL (Bharat Heavy Electricals Limited), providing insights into 10 years of operational data, predicting SLA delays, analyzing root causes (RCA), and performing semantic searches across unstructured complaint texts using an advanced AI Engineering Assistant.
 
 ## Features
 
 - **Dynamic Trends Dashboard**: Visualize KPIs, year-over-year complaint volumes, severity distributions, and cost analysis charts.
 - **Machine Learning Inference**: Real-time predictions for severity, expected resolution days, and repetitive failure likelihood using pre-trained `joblib` models.
-- **Semantic NLP Search**: Search through thousands of unstructured complaint descriptions using TF-IDF and Cosine Similarity to find relevant historical incidents and summarize their root cause learnings.
-- **Equipment Reliability Analysis**: Automatically extract the most failure-prone equipment and identify their primary defects.
+- **AI Engineering Assistant**: 
+  - **Hybrid Semantic Search**: Uses `SentenceTransformers` (all-MiniLM-L6-v2) and FAISS for fast approximate nearest-neighbor retrieval, falling back to TF-IDF when necessary.
+  - **Knowledge Integration**: Enriches search results with diagnostic procedures and preventive measures from domain-specific engineering knowledge bases (e.g., Turbine, Boiler, Pump).
+  - **Explainability**: Provides human-readable reasoning and confidence scores for recommended actions.
+  - **Continuous Feedback Loop**: Engineers can approve or rate recommendations, feeding data back into the system to incrementally improve AI accuracy.
+- **Predictive Maintenance**: Automatically identifies high-risk equipment and extracts failure patterns to warn against imminent failures.
 
 ## Tech Stack
 
 - **Backend**: Python 3, Flask, Pandas, Scikit-Learn
+- **AI / NLP**: PyTorch, SentenceTransformers, FAISS
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla), Chart.js
 - **Containerization**: Docker, Docker Compose
 
 ## Project Structure
 
-```
+```text
 .
 ├── app.py                      # Main Flask application entry point
 ├── routes/
-│   └── api.py                  # API endpoints (Blueprints)
+│   ├── api.py                  # Standard API endpoints
+│   └── ai_api.py               # AI Assistant and Feedback endpoints
 ├── services/
 │   ├── data_service.py         # Data loading and KPI aggregation
-│   └── ml_service.py           # Model inference and TF-IDF search
+│   ├── ml_service.py           # Model inference and TF-IDF fallback
+│   ├── semantic_search.py      # FAISS and SentenceTransformer indexing
+│   ├── recommendation_engine.py# Hybrid ranking and explainability logic
+│   ├── knowledge_engine.py     # Domain-specific failure mode parsing
+│   ├── feedback_engine.py      # Case approval and feedback loop
+│   └── maintenance_predictor.py# Equipment risk analysis
+├── knowledge/                  # JSON knowledge base files for various equipment
 ├── static/
 │   ├── css/style.css           # Extracted styles
 │   ├── js/main.js              # Frontend logic
@@ -45,6 +57,8 @@ A machine learning-powered predictive analytics dashboard for BHEL (Bharat Heavy
 - Docker & Docker Compose (if containerizing)
 - The dataset `10yearsdata_cleaned.csv` must be present in the root directory.
 - Pre-trained models must be present in `models_10x/` directory.
+
+> **Note for macOS users**: The application automatically sets `OMP_NUM_THREADS=1` to prevent silent thread-collision crashes between PyTorch (SentenceTransformers) and Scikit-Learn/XGBoost (Joblib).
 
 ## Installation & Running Locally
 
