@@ -347,18 +347,28 @@ class RecommendationEngine:
     def _format_cases(self, cases):
         """Format top cases for the frontend."""
         formatted = []
+        import pandas as pd
         for c in cases:
+            sev = c['severity']
+            res_days = c['resolution_days']
+            
+            if pd.isna(sev): sev = None
+            elif hasattr(sev, 'item'): sev = sev.item()
+            
+            if pd.isna(res_days): res_days = None
+            elif hasattr(res_days, 'item'): res_days = res_days.item()
+
             formatted.append({
                 'complaint_number': c['complaint_number'],
-                'similarity_score': round(c['final_score'], 3),
-                'semantic_score': round(c['semantic_score'], 3),
+                'similarity_score': round(float(c['final_score']), 3),
+                'semantic_score': round(float(c['semantic_score']), 3),
                 'equipment': c['equipment'],
                 'defect_type': c['defect_type'],
                 'problem_summary': c['problem_desc'][:150],
                 'resolution': c['disposition'][:200] if c['disposition'] else '',
                 'learning': c['learning'][:200] if c['learning'] else '',
-                'severity': c['severity'],
-                'resolution_days': c['resolution_days'],
+                'severity': sev,
+                'resolution_days': res_days,
                 'product': c['product'],
                 'vendor': c['vendor']
             })

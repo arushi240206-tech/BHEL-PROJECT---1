@@ -1,4 +1,6 @@
 import os
+os.environ['OMP_NUM_THREADS'] = '1'
+
 from flask import Flask, render_template
 
 from routes.api import api_bp
@@ -83,5 +85,8 @@ def create_app():
     return app
 
 if __name__ == '__main__':
+    import sys
+    print("Starting Flask app...")
+    sys.stdout.flush()
     app = create_app()
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=False)

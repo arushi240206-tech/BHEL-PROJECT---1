@@ -1,8 +1,6 @@
 import os
 import json
 import numpy as np
-import faiss
-from sentence_transformers import SentenceTransformer
 
 
 class SemanticSearchService:
@@ -64,6 +62,7 @@ class SemanticSearchService:
         embeddings = np.array(embeddings, dtype='float32')
 
         # Build FAISS inner-product index
+        import faiss
         print("[SemanticSearch] Building FAISS index...")
         index = faiss.IndexFlatIP(self.EMBEDDING_DIM)
         index.add(embeddings)
@@ -90,6 +89,7 @@ class SemanticSearchService:
 
         try:
             self._ensure_model()
+            import faiss
             self.index = faiss.read_index(self.index_path)
             with open(self.meta_path, 'r') as f:
                 meta = json.load(f)
@@ -145,4 +145,5 @@ class SemanticSearchService:
     # ------------------------------------------------------------------
     def _ensure_model(self):
         if self.model is None:
+            from sentence_transformers import SentenceTransformer
             self.model = SentenceTransformer(self.MODEL_NAME)
