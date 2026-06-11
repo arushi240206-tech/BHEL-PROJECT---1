@@ -1,11 +1,36 @@
+# Data files
 *.csv
 *.xls
 *.xlsx
+
+# Logs
 *.log
+train_debug.log
+
+# Machine Learning Models and Metrics
 *.joblib
 models_10x/
+embeddings/
+
+# Python Virtual Environments and Cache
 venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+.cache/
+
+# Environment Variables and Secrets
 .env
+.env.*
+
+# OS generated files
 .DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+
+# Temporary/Scratch scripts
+trace.py

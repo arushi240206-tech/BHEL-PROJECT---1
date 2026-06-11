@@ -22,11 +22,18 @@ class MLService:
 
     def load_models(self, models_dir="models_10x"):
         if os.path.exists(models_dir):
+            import sys
             print(f"Loading deployed 10x models from {models_dir}...")
+            sys.stdout.flush()
             for filepath in glob.glob(f"{models_dir}/*.joblib"):
                 task_name = os.path.basename(filepath).replace(".joblib", "")
-                self.models_10x[task_name] = joblib.load(filepath)
-                print(f" Loaded {task_name}...")
+                try:
+                    self.models_10x[task_name] = joblib.load(filepath)
+                    print(f" Loaded {task_name}...")
+                    sys.stdout.flush()
+                except BaseException as e:
+                    print(f"EXCEPTION loading {task_name}: {repr(e)}")
+                    sys.stdout.flush()
 
     def fit_tfidf(self, df):
         print("Fitting TF-IDF Vectorizer on search corpus...")

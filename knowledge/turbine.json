@@ -1,0 +1,132 @@
+{
+  "equipment_type": "Turbine",
+  "keywords": ["turbine", "rotor", "blade", "nozzle", "bearing", "shaft", "HP turbine", "LP turbine", "IP turbine", "diaphragm", "gland", "seal", "governor", "coupling", "journal bearing", "thrust bearing", "exhaust hood", "condenser neck", "turbine oil", "barring gear", "turning gear"],
+  "common_failures": [
+    {
+      "failure": "Excessive vibration in turbine bearing",
+      "probable_causes": [
+        "Bearing wear or damage causing increased clearance",
+        "Rotor imbalance due to blade erosion or deposit buildup",
+        "Misalignment of coupling between turbine and generator",
+        "Oil film instability (oil whirl/oil whip) in journal bearings",
+        "Foundation settlement or looseness"
+      ],
+      "diagnostic_procedures": [
+        "Analyze vibration spectrum for dominant frequencies (1X, 2X, sub-synchronous)",
+        "Check bearing metal temperature trends and oil drain temperature",
+        "Inspect bearing clearances using lead wire or feeler gauge method",
+        "Verify coupling alignment readings (angular and offset)",
+        "Review rotor eccentricity readings during startup/shutdown"
+      ],
+      "corrective_actions": [
+        "Replace damaged bearings — match OEM specifications for clearance",
+        "Perform in-situ or shop rotor balancing",
+        "Realign coupling as per BHEL alignment procedure",
+        "Adjust bearing oil supply pressure and temperature"
+      ],
+      "preventive_actions": [
+        "Implement online vibration monitoring with trip/alarm settings",
+        "Schedule bearing inspections every major overhaul (typically 4-6 years)",
+        "Track vibration trend data for early anomaly detection",
+        "Maintain turbine oil quality — filtration, moisture removal, acidity check"
+      ],
+      "safety_precautions": [
+        "Ensure lockout/tagout before any bearing inspection",
+        "Verify oil system depressurized before opening bearing pedestals",
+        "Use proper lifting equipment for heavy bearing components"
+      ]
+    },
+    {
+      "failure": "Turbine blade erosion or damage",
+      "probable_causes": [
+        "Solid particle erosion from boiler tube oxide scale",
+        "Wet steam erosion in LP turbine last-stage blades",
+        "Foreign object damage (FOD) from debris in steam path",
+        "Stress corrosion cracking at blade root attachments"
+      ],
+      "diagnostic_procedures": [
+        "Perform boroscopic inspection of blade rows without opening casing",
+        "Check condenser vacuum and LP exhaust conditions",
+        "Review steam purity data — silica, sodium, conductivity",
+        "Analyze blade surface for pitting, thinning, or crack indications"
+      ],
+      "corrective_actions": [
+        "Replace eroded or damaged blades with new set",
+        "Install erosion-resistant coatings (stellite shields) on LP last-stage blades",
+        "Clean steam path of debris and oxide scale",
+        "Repair blade root serrations if within limits"
+      ],
+      "preventive_actions": [
+        "Maintain strict boiler water and steam chemistry control",
+        "Perform chemical cleaning of boiler before oxide scale reaches critical levels",
+        "Install steam path strainers where feasible",
+        "Schedule boroscopic inspections during annual outages"
+      ],
+      "safety_precautions": [
+        "Never enter turbine casing without proper confined space and fall protection",
+        "Ensure casing is cooled to safe temperature before opening"
+      ]
+    },
+    {
+      "failure": "Turbine gland seal leakage",
+      "probable_causes": [
+        "Gland seal ring wear or damage",
+        "Excessive rotor runout causing seal rubbing",
+        "Gland steam supply pressure deviation",
+        "Casing distortion from thermal transients"
+      ],
+      "diagnostic_procedures": [
+        "Check gland exhaust fan suction pressure",
+        "Inspect gland seal rings for wear during shutdown",
+        "Verify gland steam supply pressure and temperature",
+        "Monitor condenser vacuum stability for signs of air ingress"
+      ],
+      "corrective_actions": [
+        "Replace worn gland seal rings",
+        "Correct rotor runout if exceeding limits",
+        "Adjust gland steam supply control valve settings",
+        "Inspect and correct casing alignment if distorted"
+      ],
+      "preventive_actions": [
+        "Monitor gland condenser level and vacuum trends regularly",
+        "Include gland seal inspection in every major overhaul scope",
+        "Ensure proper warming procedure to minimize casing thermal distortion"
+      ],
+      "safety_precautions": [
+        "Be aware of hot steam leakage hazard near gland areas during operation",
+        "Use proper PPE when inspecting gland seal area"
+      ]
+    },
+    {
+      "failure": "Turbine oil system contamination",
+      "probable_causes": [
+        "Water ingress from gland seal leakage or cooler tube leak",
+        "Varnish and sludge formation from oil degradation",
+        "Particle contamination from bearing wear or external sources",
+        "Oil cooler tube failure mixing cooling water with oil"
+      ],
+      "diagnostic_procedures": [
+        "Test oil for moisture content (Karl Fischer), acidity (TAN), particle count",
+        "Inspect oil cooler tubes for leakage using pressure test",
+        "Check oil reservoir for water accumulation at bottom",
+        "Review oil filter differential pressure trending"
+      ],
+      "corrective_actions": [
+        "Replace contaminated oil charge after thorough system flushing",
+        "Repair or plug leaking oil cooler tubes",
+        "Install or upgrade oil purification system (centrifuge, vacuum dehydrator)",
+        "Replace oil filters and clean strainers"
+      ],
+      "preventive_actions": [
+        "Implement regular oil sampling and analysis program (monthly)",
+        "Maintain oil temperature within recommended range to reduce degradation",
+        "Run oil purification system continuously during operation",
+        "Schedule oil cooler tube inspection during planned outages"
+      ],
+      "safety_precautions": [
+        "Oil is flammable — ensure fire protection systems are available",
+        "Avoid hot work near oil system without proper fire watch"
+      ]
+    }
+  ]
+}
