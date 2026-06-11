@@ -1,0 +1,138 @@
+{
+  "equipment_type": "Electrical",
+  "keywords": ["motor", "switchgear", "breaker", "circuit breaker", "relay", "protection", "cable", "bus duct", "MCC", "PCC", "VFD", "VSD", "drive", "contactor", "starter", "CT", "PT", "current transformer", "potential transformer", "battery", "UPS", "DCDB", "earthing", "grounding", "lightning arrester", "surge arrester", "isolator", "switch", "LT", "HT", "6.6 kV", "415V", "DG set", "diesel generator", "emergency power"],
+  "common_failures": [
+    {
+      "failure": "HT/LT motor winding failure",
+      "probable_causes": [
+        "Insulation breakdown from overheating — sustained overload or blocked ventilation",
+        "Moisture ingress during prolonged shutdown without space heater",
+        "Voltage unbalance or single-phasing condition",
+        "Bearing failure leading to rotor-stator rub"
+      ],
+      "diagnostic_procedures": [
+        "Measure insulation resistance (IR) and polarization index (PI)",
+        "Check motor winding temperature using RTD readings",
+        "Verify supply voltage balance across three phases",
+        "Test motor current for unbalance or overcurrent indication",
+        "Inspect motor bearing condition — vibration and temperature"
+      ],
+      "corrective_actions": [
+        "Re-wind motor if insulation is beyond recovery",
+        "Dry out moisture-affected winding using low-voltage heating method",
+        "Correct supply voltage issues — check transformer tap settings",
+        "Replace failed bearings and check rotor-stator air gap"
+      ],
+      "preventive_actions": [
+        "Ensure motor space heaters are energized during standby",
+        "Implement motor protection relay with thermal overload, phase unbalance, and earth fault",
+        "Schedule periodic IR/PI testing for critical motors",
+        "Maintain motor ventilation — clean air filters, check fan operation"
+      ],
+      "safety_precautions": [
+        "Follow LOTO procedures before any motor electrical or mechanical work",
+        "Test for voltage presence before touching motor terminals",
+        "Use insulated tools for HT motor work"
+      ]
+    },
+    {
+      "failure": "Circuit breaker failure to operate",
+      "probable_causes": [
+        "Operating mechanism spring not charged",
+        "Trip coil failure or wiring fault",
+        "Mechanical linkage binding or corrosion",
+        "SF6 gas leakage (for SF6 breakers) reducing interrupting capability"
+      ],
+      "diagnostic_procedures": [
+        "Perform breaker trip/close test from local and remote",
+        "Measure trip coil current and resistance",
+        "Check spring charge motor operation and indication",
+        "Measure SF6 gas pressure/density and test for leaks",
+        "Record breaker timing — opening and closing time"
+      ],
+      "corrective_actions": [
+        "Repair or replace trip/close coil",
+        "Lubricate and free up mechanical linkages",
+        "Recharge SF6 gas to rated pressure after sealing leaks",
+        "Replace spring charging motor if defective",
+        "Overhaul mechanism if timing is out of limits"
+      ],
+      "preventive_actions": [
+        "Include breaker in periodic maintenance — timing test, contact resistance",
+        "Exercise breakers periodically (operate breakers that are normally static)",
+        "Monitor SF6 gas pressure/density alarms",
+        "Keep spare trip coils and mechanism parts in inventory"
+      ],
+      "safety_precautions": [
+        "Ensure breaker is de-energized and racked out before maintenance",
+        "SF6 decomposition products are toxic — use proper gas handling equipment",
+        "Follow arc flash safety procedures in switchgear areas"
+      ]
+    },
+    {
+      "failure": "Protection relay maloperation",
+      "probable_causes": [
+        "Incorrect relay settings for current operating conditions",
+        "CT/PT wiring error or ratio mismatch",
+        "Relay hardware failure or software bug (for numerical relays)",
+        "CT saturation during fault conditions"
+      ],
+      "diagnostic_procedures": [
+        "Review relay event records and disturbance recordings",
+        "Secondary inject relay to verify trip settings and timing",
+        "Verify CT/PT ratios and wiring against protection drawings",
+        "Analyze fault records to determine if trip was correct or malfunction"
+      ],
+      "corrective_actions": [
+        "Correct relay settings based on updated protection coordination study",
+        "Repair CT/PT wiring errors",
+        "Replace faulty relay module",
+        "Update relay firmware if software bug identified"
+      ],
+      "preventive_actions": [
+        "Review protection settings after any system configuration change",
+        "Schedule periodic relay testing (secondary injection) annually",
+        "Maintain relay event recorder log review as part of routine",
+        "Keep protection settings documentation up to date"
+      ],
+      "safety_precautions": [
+        "Never defeat protection systems without proper bypass arrangements",
+        "Secondary injection must be done with primary circuits isolated",
+        "CT secondary must never be open-circuited while primary is energized"
+      ]
+    },
+    {
+      "failure": "Battery bank / DC system failure",
+      "probable_causes": [
+        "Individual cell capacity degradation from aging",
+        "Charger malfunction — overcharging or undercharging",
+        "Loose inter-cell connections causing high resistance",
+        "Electrolyte level low or specific gravity deviation"
+      ],
+      "diagnostic_procedures": [
+        "Measure individual cell voltages and identify weak cells",
+        "Perform capacity discharge test on battery bank",
+        "Check charger output voltage and current settings",
+        "Measure inter-cell connection resistance",
+        "Check electrolyte level and specific gravity (for flooded batteries)"
+      ],
+      "corrective_actions": [
+        "Replace weak or failed cells",
+        "Clean and retorque inter-cell connections",
+        "Recalibrate or replace battery charger",
+        "Top up electrolyte to proper level with distilled water"
+      ],
+      "preventive_actions": [
+        "Perform quarterly cell voltage and specific gravity checks",
+        "Conduct annual capacity discharge test",
+        "Maintain battery room ventilation and temperature control",
+        "Record and trend battery parameters for early degradation detection"
+      ],
+      "safety_precautions": [
+        "Battery rooms contain explosive hydrogen gas — no sparks or open flames",
+        "Wear acid-resistant PPE when handling flooded batteries",
+        "Ensure emergency eyewash and shower available in battery room"
+      ]
+    }
+  ]
+}

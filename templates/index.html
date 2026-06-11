@@ -39,9 +39,13 @@
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
                     Overview
                 </div></li>
-                <li><div class="nav-item" onclick="switchView('log-issue', this)">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                    Log New Issue
+                <li><div class="nav-item" onclick="switchView('ai-assistant', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    AI Assistant
+                </div></li>
+                <li><div class="nav-item" onclick="switchView('ai-analytics', this)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    AI Analytics
                 </div></li>
                 <li><div class="nav-item" onclick="switchView('trends', this)">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -82,7 +86,7 @@
             </ul>
             <div class="sidebar-footer">
                 <p>BHEL Trichy QA Division</p>
-                <p style="margin-top:0.25rem; font-weight:700; color:var(--bhel-blue);">v2.0.4</p>
+                <p style="margin-top:0.25rem; font-weight:700; color:var(--bhel-blue);">v3.0.0</p>
             </div>
         </aside>
 
@@ -563,39 +567,132 @@
                 </div>
             </div>
 
-            <!-- ================= VIEW: LOG NEW ISSUE ================= -->
-            <div id="view-log-issue" class="dashboard-view">
-                <div class="chart-card span-2" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-                    <div class="chart-card-header">
-                        <h3 class="chart-title" style="font-size: 1.5rem;">Log a New Issue</h3>
-                    </div>
-                    <p style="color: var(--bhel-gray-dark); margin-bottom: 1.5rem;">
-                        Describe the symptom or problem. The AI assistant will automatically suggest the defect category, severity, and past resolutions based on similar historical cases.
-                    </p>
-                    <div class="filter-group" style="margin-bottom: 1rem;">
-                        <textarea id="smart-log-input" rows="5" placeholder="e.g., Heavy vibration in the turbine bearing during startup..." style="width: 100%; padding: 1rem; border: 1px solid var(--bhel-gray); border-radius: 0.5rem; font-family: inherit; font-size: 1rem;"></textarea>
-                    </div>
-                    
-                    <div id="smart-log-suggestions" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1.5rem; margin-top: 1.5rem;">
-                        <h4 style="margin-top: 0; color: var(--bhel-blue); font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem;">AI Suggestions</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                            <div>
-                                <strong>Suggested Defect Types:</strong>
-                                <ul id="smart-log-defect" style="color: var(--bhel-orange); font-weight: 600; padding-left: 1.5rem; margin-top: 0.5rem;"></ul>
-                            </div>
-                            <div>
-                                <strong>Suggested Severities:</strong>
-                                <ul id="smart-log-severity" style="color: var(--bhel-orange); font-weight: 600; padding-left: 1.5rem; margin-top: 0.5rem;"></ul>
-                            </div>
+            <!-- ================= VIEW: AI ASSISTANT ================= -->
+            <div id="view-ai-assistant" class="dashboard-view">
+                <div style="max-width: 960px; margin: 0 auto;">
+                    <!-- Input Section -->
+                    <div class="chart-card" style="padding: 2rem;">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title" style="font-size: 1.5rem;">🤖 AI Engineering Assistant</h3>
                         </div>
-                        <div>
-                            <strong>Most Common Past Solutions (Learnings Derived):</strong>
-                            <div id="smart-log-learning" style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Describe the symptom or problem. The AI combines semantic search across 13,000+ historical cases, an engineering knowledge base, and continuous feedback learning to generate expert-level recommendations.</p>
+                        <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; margin-bottom: 1rem;">
+                            <textarea id="ai-query-input" rows="4" placeholder="e.g., Heavy vibration in the turbine bearing during startup..." style="width: 100%; padding: 1rem; border: 1px solid var(--bhel-gray); border-radius: 0.5rem; font-family: inherit; font-size: 1rem;"></textarea>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Equipment Type (optional)</label>
+                                <select id="ai-equipment-select" style="padding: 0.5rem; border: 1px solid var(--bhel-gray); border-radius: 0.5rem; font-family: inherit;"><option value="">Auto-detect</option></select>
+                                <button class="btn btn-blue" style="padding: 0.75rem 1.5rem; margin-top: auto;" onclick="fetchAIRecommendation()">Get Recommendation</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
-                        <button class="btn btn-blue" style="padding: 0.75rem 2rem; font-size: 1.1rem;" onclick="submitSmartLog()">Draft Complaint</button>
+                    <!-- AI Recommendation Panel -->
+                    <div id="ai-recommendation-panel" style="display: none;">
+                        <!-- Confidence Gauge + Equipment Detection -->
+                        <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; margin-top: 1rem;">
+                            <div class="chart-card" style="padding: 1.5rem; text-align: center; min-width: 140px;">
+                                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Confidence</div>
+                                <div id="ai-confidence-score" style="font-size: 2.5rem; font-weight: 800; color: var(--bhel-blue);">0%</div>
+                                <div id="ai-equipment-detected" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;"></div>
+                            </div>
+                            <div class="chart-card" style="padding: 1.5rem;">
+                                <h4 style="color: var(--danger); margin: 0 0 0.75rem 0; font-size: 1rem;">⚠️ Probable Root Causes</h4>
+                                <ul id="ai-root-causes" style="padding-left: 1.5rem; margin: 0;"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Diagnostic + Actions -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                            <div class="chart-card" style="padding: 1.5rem;">
+                                <h4 style="color: var(--bhel-blue); margin: 0 0 0.75rem 0; font-size: 1rem;">🔍 Diagnostic Checks</h4>
+                                <ol id="ai-diagnostic-checks" style="padding-left: 1.5rem; margin: 0; font-size: 0.9rem;"></ol>
+                            </div>
+                            <div class="chart-card" style="padding: 1.5rem;">
+                                <h4 style="color: #10b981; margin: 0 0 0.75rem 0; font-size: 1rem;">✅ Recommended Actions</h4>
+                                <ol id="ai-recommended-actions" style="padding-left: 1.5rem; margin: 0; font-size: 0.9rem;"></ol>
+                            </div>
+                        </div>
+
+                        <!-- Preventive + Safety -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                            <div class="chart-card" style="padding: 1.5rem;">
+                                <h4 style="color: var(--bhel-orange); margin: 0 0 0.75rem 0; font-size: 1rem;">🛡️ Preventive Measures</h4>
+                                <ul id="ai-preventive-measures" style="padding-left: 1.5rem; margin: 0; font-size: 0.9rem;"></ul>
+                            </div>
+                            <div class="chart-card" style="padding: 1.5rem;">
+                                <h4 style="color: var(--danger); margin: 0 0 0.75rem 0; font-size: 1rem;">🚨 Safety Precautions</h4>
+                                <ul id="ai-safety-precautions" style="padding-left: 1.5rem; margin: 0; font-size: 0.9rem;"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Similar Cases -->
+                        <div class="chart-card" style="padding: 1.5rem; margin-top: 1rem;">
+                            <h4 style="color: var(--bhel-blue); margin: 0 0 0.75rem 0; font-size: 1rem;">📋 Similar Historical Cases</h4>
+                            <div id="ai-similar-cases" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                        </div>
+
+                        <!-- Explainability -->
+                        <div class="chart-card" style="padding: 1.5rem; margin-top: 1rem; background: rgba(0,53,148,0.02);">
+                            <h4 style="color: var(--text-muted); margin: 0 0 0.75rem 0; font-size: 0.9rem;">🧠 Why This Recommendation</h4>
+                            <p id="ai-explanation-text" style="font-size: 0.9rem; line-height: 1.6; margin: 0;"></p>
+                        </div>
+
+                        <!-- Feedback Buttons -->
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem; align-items: center;">
+                            <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Was this recommendation helpful?</span>
+                            <button class="btn" style="background: #10b981; color: white; padding: 0.5rem 1.5rem;" onclick="submitAIFeedback('helpful')">👍 Helpful</button>
+                            <button class="btn" style="background: var(--danger); color: white; padding: 0.5rem 1.5rem;" onclick="submitAIFeedback('not_helpful')">👎 Not Helpful</button>
+                            <span id="ai-feedback-status" style="font-size: 0.85rem; color: #10b981; display: none;">✓ Feedback recorded</span>
+                        </div>
+
+                        <!-- Submit Resolved Case -->
+                        <div class="chart-card" style="padding: 1.5rem; margin-top: 1.5rem; border: 2px dashed var(--bhel-blue);">
+                            <h4 style="color: var(--bhel-blue); margin: 0 0 0.75rem 0; font-size: 1rem;">📝 Submit Resolved Case (Continuous Learning)</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Submit the actual resolution to improve future AI recommendations. Cases go through an approval queue before being included in training data.</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="filter-group"><label>Final Defect Type</label><input type="text" id="case-defect" class="form-input" placeholder="e.g., Mechanical Defect"></div>
+                                <div class="filter-group"><label>Equipment Name</label><input type="text" id="case-equipment" class="form-input" placeholder="e.g., HP Turbine"></div>
+                                <div class="filter-group"><label>Severity (0-1)</label><input type="number" id="case-severity" class="form-input" step="0.1" min="0" max="1" placeholder="0.5"></div>
+                                <div class="filter-group"><label>Resolution</label><input type="text" id="case-resolution" class="form-input" placeholder="Actions taken..."></div>
+                            </div>
+                            <div class="filter-group" style="margin-top: 1rem;"><label>Learning Derived</label><textarea id="case-learning" class="form-input" rows="2" placeholder="Key takeaway or preventive insight..."></textarea></div>
+                            <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                                <button class="btn btn-blue" style="padding: 0.75rem 2rem;" onclick="submitResolvedCase()">Submit for Review</button>
+                            </div>
+                            <div id="case-submit-status" style="display: none; margin-top: 0.75rem; font-size: 0.85rem; color: #10b981;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: AI ANALYTICS ================= -->
+            <div id="view-ai-analytics" class="dashboard-view">
+                <div class="grid-2col">
+                    <!-- Equipment Health Scores -->
+                    <div class="chart-card" style="grid-column: span 2;">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Equipment Health & Risk Scores</h3>
+                        </div>
+                        <div id="ai-equipment-health-table" style="overflow-x: auto;"></div>
+                    </div>
+
+                    <!-- Feedback Analytics -->
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Recommendation Accuracy</h3>
+                        </div>
+                        <div style="padding: 1rem;">
+                            <div id="ai-feedback-summary" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;"></div>
+                            <div class="chart-wrapper" style="min-height: 200px;"><canvas id="chart-feedback-trend"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Cases -->
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Pending Case Approvals</h3>
+                        </div>
+                        <div id="ai-pending-cases-list" style="padding: 1rem; max-height: 400px; overflow-y: auto;"></div>
                     </div>
                 </div>
             </div>

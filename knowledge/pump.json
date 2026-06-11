@@ -1,0 +1,101 @@
+{
+  "equipment_type": "Pump",
+  "keywords": ["pump", "BFP", "boiler feed pump", "CEP", "condensate extraction pump", "CW pump", "circulating water pump", "impeller", "mechanical seal", "gland packing", "suction", "discharge", "cavitation", "priming", "centrifugal pump", "booster pump", "ACW pump", "ash slurry pump"],
+  "common_failures": [
+    {
+      "failure": "Pump excessive vibration or noise",
+      "probable_causes": [
+        "Impeller imbalance due to wear, erosion, or deposit buildup",
+        "Misalignment between pump and motor coupling",
+        "Bearing wear or damage",
+        "Cavitation due to insufficient NPSH (Net Positive Suction Head)",
+        "Loose foundation bolts"
+      ],
+      "diagnostic_procedures": [
+        "Record vibration readings at all bearing locations (H, V, A)",
+        "Check coupling alignment using dial indicator or laser alignment tool",
+        "Verify suction pressure and compare with NPSH required",
+        "Inspect bearing condition — temperature, grease quality, play",
+        "Check foundation bolt torque"
+      ],
+      "corrective_actions": [
+        "Replace or repair impeller if worn or imbalanced",
+        "Realign pump-motor coupling to within OEM tolerance",
+        "Replace damaged bearings",
+        "Improve suction conditions — raise suction tank level, reduce suction line losses"
+      ],
+      "preventive_actions": [
+        "Include pump vibration in regular condition monitoring rounds",
+        "Schedule alignment check after every motor or pump replacement",
+        "Maintain minimum suction head above NPSH required",
+        "Periodically check and tighten foundation bolts"
+      ],
+      "safety_precautions": [
+        "Ensure pump is isolated and de-energized before inspection",
+        "Drain pump casing before opening — may contain hot water under pressure",
+        "Use hearing protection in pump house areas with high noise levels"
+      ]
+    },
+    {
+      "failure": "Mechanical seal leakage",
+      "probable_causes": [
+        "Seal face wear from normal aging or abrasive particles",
+        "Seal face damage from dry running or thermal shock",
+        "Incorrect seal setting or installation",
+        "Shaft runout exceeding seal tolerance"
+      ],
+      "diagnostic_procedures": [
+        "Observe leakage rate — differentiate between drip and spray",
+        "Check seal flush water pressure and flow",
+        "Measure shaft runout at seal location",
+        "Inspect seal faces under magnification for scoring or chipping"
+      ],
+      "corrective_actions": [
+        "Replace mechanical seal assembly with matching OEM specification",
+        "Correct shaft runout if exceeding limits (may require shaft sleeve replacement)",
+        "Ensure proper seal setting height during installation",
+        "Verify seal flush system is operating correctly"
+      ],
+      "preventive_actions": [
+        "Maintain clean seal flush water supply",
+        "Avoid dry running — ensure pump priming before start",
+        "Track seal life and plan replacement before failure",
+        "Install seal leak detection sensors where available"
+      ],
+      "safety_precautions": [
+        "Hot water or chemical leakage is a burn hazard — wear appropriate PPE",
+        "Isolate pump from system before seal replacement"
+      ]
+    },
+    {
+      "failure": "Pump performance degradation (low flow/head)",
+      "probable_causes": [
+        "Impeller wear ring clearance exceeding limits",
+        "Internal recirculation due to worn wear rings",
+        "Partially clogged suction strainer",
+        "Air entrainment in suction line"
+      ],
+      "diagnostic_procedures": [
+        "Plot current operating point on pump performance curve",
+        "Measure wear ring clearances",
+        "Check suction strainer differential pressure",
+        "Verify suction line is free of air pockets — check vent valves"
+      ],
+      "corrective_actions": [
+        "Replace worn wear rings to restore clearances",
+        "Clean or replace suction strainer",
+        "Repair suction line air leaks",
+        "Overhaul pump if multiple components are degraded"
+      ],
+      "preventive_actions": [
+        "Record pump head/flow/power at regular intervals to track degradation",
+        "Clean suction strainer during planned shutdowns",
+        "Plan wear ring replacement based on clearance trending"
+      ],
+      "safety_precautions": [
+        "Follow LOTO procedures before pump disassembly",
+        "Support heavy components (casing, impeller) with proper lifting devices"
+      ]
+    }
+  ]
+}
