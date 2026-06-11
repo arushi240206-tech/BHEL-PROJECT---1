@@ -20,7 +20,8 @@ def mock_data_service():
         'Complaint Date': pd.to_datetime(['2022-01-01', '2023-01-01', '2024-01-01']),
         'Severity Rating (Given by Unit)': [0.8, 0.4, 0.9],
         'Repetitive Issues Identified by Unit (Y/N)': ['N', 'Y', 'N'],
-        'Days Taken for Disposition': [10, 5, 20]
+        'Days Taken for Disposition': [10, 5, 20],
+        'Unit Disposition': ['Weld tube', 'Replaced bearings', 'Rewound stator']
     })
     service.df.index = [0, 1, 2]
     return service

@@ -130,7 +130,7 @@ class FeedbackEngine:
 
         try:
             df = pd.read_csv(self.approved_path)
-            mask = (df['case_id'] == case_id) & (df['status'] == 'pending')
+            mask = (df['case_id'].astype(str) == str(case_id)) & (df['status'] == 'pending')
             if mask.sum() == 0:
                 return False
 
