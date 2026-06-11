@@ -2,10 +2,9 @@
   {
     "task_name": "Resolution_Time",
     "best_model": "RandomForest",
-    "score": 138.88734410966566,
+    "score": 141.51367685927698,
     "is_classification": false,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -17,10 +16,9 @@
   {
     "task_name": "Severity",
     "best_model": "LightGBM",
-    "score": 0.6524741081703107,
+    "score": 0.6490218642117376,
     "is_classification": true,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -32,10 +30,9 @@
   {
     "task_name": "Cost",
     "best_model": "RandomForest",
-    "score": 72224.16207346931,
+    "score": 69104.2941369811,
     "is_classification": false,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -50,7 +47,6 @@
     "score": 0.9911775987725355,
     "is_classification": true,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -62,10 +58,9 @@
   {
     "task_name": "Vendor_Risk",
     "best_model": "LightGBM",
-    "score": 1.5931485609034612,
+    "score": 1.6110580078673573,
     "is_classification": false,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -82,11 +77,10 @@
   },
   {
     "task_name": "Escalation",
-    "best_model": "Logistic",
-    "score": 0.7406981204449559,
+    "best_model": "LightGBM",
+    "score": 0.741848868431147,
     "is_classification": true,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -97,10 +91,9 @@
   {
     "task_name": "Delay",
     "best_model": "LightGBM",
-    "score": 0.6889144610663598,
+    "score": 0.6766398158803222,
     "is_classification": true,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -112,10 +105,9 @@
   {
     "task_name": "Warranty_Recovery",
     "best_model": "LightGBM",
-    "score": 0.7414652857690832,
+    "score": 0.7334100498657461,
     "is_classification": true,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -126,10 +118,9 @@
   {
     "task_name": "Reliability",
     "best_model": "LightGBM",
-    "score": 12.27655665326673,
+    "score": 12.474706659132654,
     "is_classification": false,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",
@@ -143,7 +134,6 @@
     "score": 0.922132719601074,
     "is_classification": true,
     "features": [
-      "Equipment_Name",
       "Item",
       "Complaint_Type",
       "Unit",

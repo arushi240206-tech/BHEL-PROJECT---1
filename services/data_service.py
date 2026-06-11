@@ -301,15 +301,15 @@ class DataService:
         if f_df.empty:
             return []
 
-        f_df = f_df.dropna(subset=['PGMA Description'])
-        top_products = f_df['Equipment Name'].value_counts().head(5)
+        f_df = f_df.dropna(subset=['PGMA'])
+        top_products = f_df['Item'].value_counts().head(5)
         
         equipment_data = []
         for product_name, count in top_products.items():
             if pd.isna(product_name) or product_name == 'Unknown':
                 continue
                 
-            prod_df = f_df[f_df['Equipment Name'] == product_name]
+            prod_df = f_df[f_df['Item'] == product_name]
             top_defects = prod_df['Defect Type'].value_counts().head(2)
             
             defects_list = []
@@ -347,8 +347,8 @@ class DataService:
             return []
             
         recent_df = self.df.sort_values('Complaint Date', ascending=False).head(100)
-        recent_df = recent_df.dropna(subset=['Equipment Name'])
-        freq = recent_df['Equipment Name'].value_counts()
+        recent_df = recent_df.dropna(subset=['Item'])
+        freq = recent_df['Item'].value_counts()
         
         alerts = []
         for eq, count in freq.items():
@@ -373,3 +373,4 @@ class DataService:
             return None
             
         return round(float(avg_res), 1)
+        
